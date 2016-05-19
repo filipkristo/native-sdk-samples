@@ -13,7 +13,7 @@ static int print_device_id = true;
 static int nb_track_to_play = 1; // This number includes the audio ads to play
 static int nb_track_played = 0;
 
-#define USER_ACCESS_TOKEN        "frC4j1kSLxbikSLM12HtsylYnJfS6j7EAaRDJCeSzjb3bw2VRq"
+#define USER_ACCESS_TOKEN        "frC4j1kSLxbikSLM12HtsylYnJfS6j7EAaRDJCeSzjb3bw2VRq" // Sample access token corresponding to a free user account, to be replaced by yours.
 #define USER_CACHE_PATH          "/home/deezer/dzrcache_NSDK_SAMPLE" // SET THE USER CACHE PATH, This pasth must already exist
 #define YOUR_APPLICATION_ID      "122735"    // SET YOUR APPLICATION ID
 #define YOUR_APPLICATION_NAME    "dzplayer"  // SET YOUR APPLICATION NAME
@@ -93,7 +93,7 @@ int main(void) {
     }
     activation_count++;
 
-    /* For the moment the call to dz_connect_cache_path_set()
+    /* Calling dz_connect_cache_path_set()
      * is mandatory in order to have the attended behavior */
     dz_connect_cache_path_set(dzconnect, NULL, NULL, USER_CACHE_PATH);
 
@@ -122,8 +122,7 @@ int main(void) {
         return -1;
     }
 
-    /* For the moment the call to dz_connect_offline_mode(FALSE)
-     * is mandatory to force the login */
+    /* Calling dz_connect_offline_mode(FALSE) is mandatory to force the login */
     dzerr = dz_connect_offline_mode(dzconnect, NULL, NULL, false);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_offline_mode error\n");
