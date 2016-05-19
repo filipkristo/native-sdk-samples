@@ -13,11 +13,11 @@ static int print_device_id = true;
 static int nb_track_to_play = 1; // This number includes the audio ads to play
 static int nb_track_played = 0;
 
-#define USER_ACCESS_TOKEN        "frC4j1kSLxbikSLM12HtsylYnJfS6j7EAaRDJCeSzjb3bw2VRq" // Sample access token corresponding to a free user account, to be replaced by yours.
+#define USER_ACCESS_TOKEN        "fr49mph7tV4KY3ukISkFHQysRpdCEbzb958dB320pM15OpFsQs" // Sample access token corresponding to a free user account, to be replaced by yours.
 #define USER_CACHE_PATH          "/home/deezer/dzrcache_NSDK_SAMPLE" // SET THE USER CACHE PATH, This pasth must already exist
-#define YOUR_APPLICATION_ID      "122735"    // SET YOUR APPLICATION ID
-#define YOUR_APPLICATION_NAME    "dzplayer"  // SET YOUR APPLICATION NAME
-#define YOUR_APPLICATION_VERSION "00001"     // SET YOUR APPLICATION VERSION
+#define YOUR_APPLICATION_ID      "180202"     // SET YOUR APPLICATION ID
+#define YOUR_APPLICATION_NAME    "NanoPlayer" // SET YOUR APPLICATION NAME
+#define YOUR_APPLICATION_VERSION "00001"      // SET YOUR APPLICATION VERSION
     
 static dz_connect_handle dzconnect;
 static dz_player_handle  dzplayer;
