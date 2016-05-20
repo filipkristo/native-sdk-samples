@@ -73,6 +73,29 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   <ItemGroup>
     <ClCompile Include="main.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\NativeSDK\Include\deezer-api.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-track.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-connect.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-object.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-offline-sync.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-offline.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NativeSDK\Include\deezer-player.h">
+      <Filter>NativeSDK</Filter>
+    </ClInclude>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
