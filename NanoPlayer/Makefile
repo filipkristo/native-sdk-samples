@@ -23,9 +23,10 @@ ifeq ($(UNAME_S),Linux)
 $(info $************  Linux  ************)
 SDK_LIB_DIR:=$(addsuffix /Linux,$(SDK_LIB_DIR))
 CC=gcc
+CFLAGS=-W -Wall -I$(SDK_INC_DIR) -Wno-unused-parameter
 LDFLAGS=-L$(SDK_LIB_DIR) \
--Wl,-rpath $(SDK_LIB_DIR) \
--ldeezer
+        -Wl,-rpath $(SDK_LIB_DIR) \
+        -ldeezer
 UNAME_P := $(shell uname -p)
 ifeq ($(UNAME_P),x86_64)
 $(info $************  64 Bits  ************)
