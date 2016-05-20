@@ -1,6 +1,15 @@
 #include <string.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+static __inline int sleep(int s) {
+	Sleep(1000*s);
+	return 0;
+}
+#else
 #include <unistd.h>
+#endif
 
 #include <deezer-connect.h>
 #include <deezer-player.h>

@@ -36,19 +36,21 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
 ```
 
 * To build the sample on Windows
---> TBD
-```
-> cd NanoPlayer
-> make
-```
 
+Open `NanoPlayer.vcxproj` with Microsoft Visual Studio (2012 or upper).
 
 ### Run this sample
 
-On Linux the application will need pulseaudio packaged installed.
+* On Linux and Mac OS
+
+(On Linux the application will need **_pulseaudio_** packaged installed.)
 
 ```
 > ./NanoPlayer
 ```
+
+* On Windows
+
+Run it through Microsoft Visual Studio debug tool or copy the Deezer Native SDK DLLs in the generated executable folder if you want to execute it in standalone.
 
  [1]: http://developers.deezer.com/sdk/native
