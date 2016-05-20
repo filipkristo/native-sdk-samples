@@ -35,13 +35,6 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
 > make
 ```
 
-* To build the sample on Mac OS
---> TBD
-```
-> cd NanoPlayer
-> make
-```
-
 * To build the sample on Windows
 --> TBD
 ```
