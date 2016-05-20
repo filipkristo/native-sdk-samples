@@ -19,7 +19,7 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
 ### Build instructions
 
 * Download the latest version of the [Deezer Native SDK][1]
-* Unzip it and place the "libdeezer" folder at the root of this repository, such as shown below:
+* Unzip it and place the folder, renamed into NativeSDK, at the root of this repository, such as shown below:
 ```
 <native-sdk-samples>
 ├── NativeSDK
@@ -29,8 +29,7 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
 └── README.md
 ```
 
-* To build the sample on Linux
---> TBD
+* To build the sample on Linux and Mac OS
 ```
 > cd NanoPlayer
 > make
@@ -52,6 +51,8 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
 
 
 ### Run this sample
+
+On Linux the application will need pulseaudio packaged installed.
 
 ```
 > ./NanoPlayer
