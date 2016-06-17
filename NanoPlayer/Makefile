@@ -27,16 +27,16 @@ CFLAGS=-W -Wall -I$(SDK_INC_DIR) -Wno-unused-parameter
 LDFLAGS=-L$(SDK_LIB_DIR) \
         -Wl,-rpath $(SDK_LIB_DIR) \
         -ldeezer
-UNAME_P := $(shell uname -p)
-ifeq ($(UNAME_P),x86_64)
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
 $(info $************  64 Bits  ************)
 SDK_LIB_DIR:=$(addsuffix /x86_64,$(SDK_LIB_DIR))
 endif
-ifneq ($(filter %86,$(UNAME_P)),)
+ifneq ($(filter %86,$(UNAME_M)),)
 $(info $************  32 Bits  ************)
 SDK_LIB_DIR:=$(addsuffix /i386,$(SDK_LIB_DIR))
 endif
-ifneq ($(filter arm%,$(UNAME_P)),)
+ifneq ($(filter arm%,$(UNAME_M)),)
 $(info $************  ARM  ************)
 SDK_LIB_DIR:=$(addsuffix /arm,$(SDK_LIB_DIR))
 endif
