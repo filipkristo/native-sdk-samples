@@ -1,0 +1,454 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C11A9F0B1D130813009980DB /* libdeezer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C11A9F0A1D130813009980DB /* libdeezer.framework */; };
+		C11A9F0D1D130B5F009980DB /* libdeezer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C11A9F0A1D130813009980DB /* libdeezer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C12358AC1D192D3B0054F606 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358991D192D3B0054F606 /* SBJsonParser.m */; };
+		C12358AD1D192D3B0054F606 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C123589B1D192D3B0054F606 /* SBJsonStreamParser.m */; };
+		C12358AE1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = C123589D1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m */; };
+		C12358AF1D192D3B0054F606 /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = C123589F1D192D3B0054F606 /* SBJsonStreamParserAdapter.m */; };
+		C12358B01D192D3B0054F606 /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358A11D192D3B0054F606 /* SBJsonStreamParserState.m */; };
+		C12358B11D192D3B0054F606 /* SBJsonStreamTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358A31D192D3B0054F606 /* SBJsonStreamTokeniser.m */; };
+		C12358B21D192D3B0054F606 /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358A51D192D3B0054F606 /* SBJsonStreamWriter.m */; };
+		C12358B31D192D3B0054F606 /* SBJsonStreamWriterAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358A71D192D3B0054F606 /* SBJsonStreamWriterAccumulator.m */; };
+		C12358B41D192D3B0054F606 /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358A91D192D3B0054F606 /* SBJsonStreamWriterState.m */; };
+		C12358B51D192D3B0054F606 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358AB1D192D3B0054F606 /* SBJsonWriter.m */; };
+		C12358B81D192D640054F606 /* JsonStreamParserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358B71D192D640054F606 /* JsonStreamParserDelegate.m */; };
+		C12358BE1D1949940054F606 /* JsonParserHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358BD1D1949940054F606 /* JsonParserHelper.m */; };
+		C12358DA1D196E3E0054F606 /* DZRTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358D91D196E3E0054F606 /* DZRTrack.m */; };
+		C16982D21D1BDD1B00A88774 /* DZRNative.m in Sources */ = {isa = PBXBuildFile; fileRef = C16982D11D1BDD1B00A88774 /* DZRNative.m */; };
+		C1DDBCD11D103DA2001AFA87 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCD01D103DA2001AFA87 /* AppDelegate.m */; };
+		C1DDBCD41D103DA2001AFA87 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCD31D103DA2001AFA87 /* main.m */; };
+		C1DDBCD61D103DA2001AFA87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1DDBCD51D103DA2001AFA87 /* Assets.xcassets */; };
+		C1DDBCD91D103DA3001AFA87 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C1DDBCD71D103DA3001AFA87 /* MainMenu.xib */; };
+		C1DDBCE51D104100001AFA87 /* DebugHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCE11D104100001AFA87 /* DebugHelper.m */; };
+		C1DDBCF01D1046D8001AFA87 /* PlaylistView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C1DDBCEB1D1046D8001AFA87 /* PlaylistView.xib */; };
+		C1DDBCF11D1046D8001AFA87 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCED1D1046D8001AFA87 /* MainWindowController.m */; };
+		C1DDBCF21D1046D8001AFA87 /* PlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCEE1D1046D8001AFA87 /* PlaylistViewController.m */; };
+		C1DDBCF41D1047B5001AFA87 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C1DDBCF31D1047B5001AFA87 /* MainWindow.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C11A9F0C1D130B59009980DB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C11A9F0D1D130B5F009980DB /* libdeezer.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C11A9F0A1D130813009980DB /* libdeezer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libdeezer.framework; path = SDK/Bins/Platforms/MacOSX/libdeezer.framework; sourceTree = "<group>"; };
+		C12358971D192D3B0054F606 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJson.h; path = OfflineModePlayer/External/SBJson/SBJson.h; sourceTree = "<group>"; };
+		C12358981D192D3B0054F606 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonParser.h; path = OfflineModePlayer/External/SBJson/SBJsonParser.h; sourceTree = "<group>"; };
+		C12358991D192D3B0054F606 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonParser.m; path = OfflineModePlayer/External/SBJson/SBJsonParser.m; sourceTree = "<group>"; };
+		C123589A1D192D3B0054F606 /* SBJsonStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParser.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamParser.h; sourceTree = "<group>"; };
+		C123589B1D192D3B0054F606 /* SBJsonStreamParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParser.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamParser.m; sourceTree = "<group>"; };
+		C123589C1D192D3B0054F606 /* SBJsonStreamParserAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserAccumulator.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserAccumulator.h; sourceTree = "<group>"; };
+		C123589D1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserAccumulator.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserAccumulator.m; sourceTree = "<group>"; };
+		C123589E1D192D3B0054F606 /* SBJsonStreamParserAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserAdapter.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserAdapter.h; sourceTree = "<group>"; };
+		C123589F1D192D3B0054F606 /* SBJsonStreamParserAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserAdapter.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserAdapter.m; sourceTree = "<group>"; };
+		C12358A01D192D3B0054F606 /* SBJsonStreamParserState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserState.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserState.h; sourceTree = "<group>"; };
+		C12358A11D192D3B0054F606 /* SBJsonStreamParserState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserState.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamParserState.m; sourceTree = "<group>"; };
+		C12358A21D192D3B0054F606 /* SBJsonStreamTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamTokeniser.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamTokeniser.h; sourceTree = "<group>"; };
+		C12358A31D192D3B0054F606 /* SBJsonStreamTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamTokeniser.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamTokeniser.m; sourceTree = "<group>"; };
+		C12358A41D192D3B0054F606 /* SBJsonStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriter.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriter.h; sourceTree = "<group>"; };
+		C12358A51D192D3B0054F606 /* SBJsonStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriter.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriter.m; sourceTree = "<group>"; };
+		C12358A61D192D3B0054F606 /* SBJsonStreamWriterAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriterAccumulator.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriterAccumulator.h; sourceTree = "<group>"; };
+		C12358A71D192D3B0054F606 /* SBJsonStreamWriterAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriterAccumulator.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriterAccumulator.m; sourceTree = "<group>"; };
+		C12358A81D192D3B0054F606 /* SBJsonStreamWriterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriterState.h; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriterState.h; sourceTree = "<group>"; };
+		C12358A91D192D3B0054F606 /* SBJsonStreamWriterState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriterState.m; path = OfflineModePlayer/External/SBJson/SBJsonStreamWriterState.m; sourceTree = "<group>"; };
+		C12358AA1D192D3B0054F606 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonWriter.h; path = OfflineModePlayer/External/SBJson/SBJsonWriter.h; sourceTree = "<group>"; };
+		C12358AB1D192D3B0054F606 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonWriter.m; path = OfflineModePlayer/External/SBJson/SBJsonWriter.m; sourceTree = "<group>"; };
+		C12358B61D192D640054F606 /* JsonStreamParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonStreamParserDelegate.h; sourceTree = "<group>"; };
+		C12358B71D192D640054F606 /* JsonStreamParserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonStreamParserDelegate.m; sourceTree = "<group>"; };
+		C12358BC1D1949940054F606 /* JsonParserHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParserHelper.h; sourceTree = "<group>"; };
+		C12358BD1D1949940054F606 /* JsonParserHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonParserHelper.m; sourceTree = "<group>"; };
+		C12358D81D196E3E0054F606 /* DZRTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZRTrack.h; sourceTree = "<group>"; };
+		C12358D91D196E3E0054F606 /* DZRTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZRTrack.m; sourceTree = "<group>"; };
+		C16982D01D1BDD1B00A88774 /* DZRNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZRNative.h; sourceTree = "<group>"; };
+		C16982D11D1BDD1B00A88774 /* DZRNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZRNative.m; sourceTree = "<group>"; };
+		C1DDBCCC1D103DA2001AFA87 /* OfflineModePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineModePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1DDBCCF1D103DA2001AFA87 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C1DDBCD01D103DA2001AFA87 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C1DDBCD31D103DA2001AFA87 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C1DDBCD51D103DA2001AFA87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C1DDBCD81D103DA3001AFA87 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		C1DDBCDA1D103DA3001AFA87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C1DDBCE01D104100001AFA87 /* DebugHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugHelper.h; sourceTree = "<group>"; };
+		C1DDBCE11D104100001AFA87 /* DebugHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugHelper.m; sourceTree = "<group>"; };
+		C1DDBCEB1D1046D8001AFA87 /* PlaylistView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlaylistView.xib; path = UI/PlaylistView.xib; sourceTree = "<group>"; };
+		C1DDBCEC1D1046D8001AFA87 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowController.h; path = UI/MainWindowController.h; sourceTree = "<group>"; };
+		C1DDBCED1D1046D8001AFA87 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainWindowController.m; path = UI/MainWindowController.m; sourceTree = "<group>"; };
+		C1DDBCEE1D1046D8001AFA87 /* PlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaylistViewController.m; path = UI/PlaylistViewController.m; sourceTree = "<group>"; };
+		C1DDBCEF1D1046D8001AFA87 /* PlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistViewController.h; path = UI/PlaylistViewController.h; sourceTree = "<group>"; };
+		C1DDBCF31D1047B5001AFA87 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindow.xib; path = UI/MainWindow.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C1DDBCC91D103DA2001AFA87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C11A9F0B1D130813009980DB /* libdeezer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C12358951D192CFD0054F606 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				C12358961D192D090054F606 /* JsonParser */,
+				C11A9F0A1D130813009980DB /* libdeezer.framework */,
+			);
+			name = External;
+			sourceTree = "<group>";
+		};
+		C12358961D192D090054F606 /* JsonParser */ = {
+			isa = PBXGroup;
+			children = (
+				C12358971D192D3B0054F606 /* SBJson.h */,
+				C12358981D192D3B0054F606 /* SBJsonParser.h */,
+				C12358991D192D3B0054F606 /* SBJsonParser.m */,
+				C123589A1D192D3B0054F606 /* SBJsonStreamParser.h */,
+				C123589B1D192D3B0054F606 /* SBJsonStreamParser.m */,
+				C123589C1D192D3B0054F606 /* SBJsonStreamParserAccumulator.h */,
+				C123589D1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m */,
+				C123589E1D192D3B0054F606 /* SBJsonStreamParserAdapter.h */,
+				C123589F1D192D3B0054F606 /* SBJsonStreamParserAdapter.m */,
+				C12358A01D192D3B0054F606 /* SBJsonStreamParserState.h */,
+				C12358A11D192D3B0054F606 /* SBJsonStreamParserState.m */,
+				C12358A21D192D3B0054F606 /* SBJsonStreamTokeniser.h */,
+				C12358A31D192D3B0054F606 /* SBJsonStreamTokeniser.m */,
+				C12358A41D192D3B0054F606 /* SBJsonStreamWriter.h */,
+				C12358A51D192D3B0054F606 /* SBJsonStreamWriter.m */,
+				C12358A61D192D3B0054F606 /* SBJsonStreamWriterAccumulator.h */,
+				C12358A71D192D3B0054F606 /* SBJsonStreamWriterAccumulator.m */,
+				C12358A81D192D3B0054F606 /* SBJsonStreamWriterState.h */,
+				C12358A91D192D3B0054F606 /* SBJsonStreamWriterState.m */,
+				C12358AA1D192D3B0054F606 /* SBJsonWriter.h */,
+				C12358AB1D192D3B0054F606 /* SBJsonWriter.m */,
+			);
+			name = JsonParser;
+			sourceTree = "<group>";
+		};
+		C1DDBCC31D103DA2001AFA87 = {
+			isa = PBXGroup;
+			children = (
+				C1DDBCCE1D103DA2001AFA87 /* OfflineModePlayer */,
+				C12358951D192CFD0054F606 /* External */,
+				C1DDBCCD1D103DA2001AFA87 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C1DDBCCD1D103DA2001AFA87 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1DDBCCC1D103DA2001AFA87 /* OfflineModePlayer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C1DDBCCE1D103DA2001AFA87 /* OfflineModePlayer */ = {
+			isa = PBXGroup;
+			children = (
+				C1DDBCEA1D104585001AFA87 /* UI */,
+				C12358BC1D1949940054F606 /* JsonParserHelper.h */,
+				C12358BD1D1949940054F606 /* JsonParserHelper.m */,
+				C12358B61D192D640054F606 /* JsonStreamParserDelegate.h */,
+				C12358B71D192D640054F606 /* JsonStreamParserDelegate.m */,
+				C1DDBCE01D104100001AFA87 /* DebugHelper.h */,
+				C1DDBCE11D104100001AFA87 /* DebugHelper.m */,
+				C16982D01D1BDD1B00A88774 /* DZRNative.h */,
+				C16982D11D1BDD1B00A88774 /* DZRNative.m */,
+				C12358D81D196E3E0054F606 /* DZRTrack.h */,
+				C12358D91D196E3E0054F606 /* DZRTrack.m */,
+				C1DDBCCF1D103DA2001AFA87 /* AppDelegate.h */,
+				C1DDBCD01D103DA2001AFA87 /* AppDelegate.m */,
+				C1DDBCD51D103DA2001AFA87 /* Assets.xcassets */,
+				C1DDBCD71D103DA3001AFA87 /* MainMenu.xib */,
+				C1DDBCDA1D103DA3001AFA87 /* Info.plist */,
+				C1DDBCD21D103DA2001AFA87 /* Supporting Files */,
+			);
+			path = OfflineModePlayer;
+			sourceTree = "<group>";
+		};
+		C1DDBCD21D103DA2001AFA87 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C1DDBCD31D103DA2001AFA87 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C1DDBCEA1D104585001AFA87 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				C1DDBCF31D1047B5001AFA87 /* MainWindow.xib */,
+				C1DDBCEC1D1046D8001AFA87 /* MainWindowController.h */,
+				C1DDBCED1D1046D8001AFA87 /* MainWindowController.m */,
+				C1DDBCEB1D1046D8001AFA87 /* PlaylistView.xib */,
+				C1DDBCEF1D1046D8001AFA87 /* PlaylistViewController.h */,
+				C1DDBCEE1D1046D8001AFA87 /* PlaylistViewController.m */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C1DDBCCB1D103DA2001AFA87 /* OfflineModePlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1DDBCDD1D103DA3001AFA87 /* Build configuration list for PBXNativeTarget "OfflineModePlayer" */;
+			buildPhases = (
+				C1DDBCC81D103DA2001AFA87 /* Sources */,
+				C1DDBCC91D103DA2001AFA87 /* Frameworks */,
+				C1DDBCCA1D103DA2001AFA87 /* Resources */,
+				C11A9F0C1D130B59009980DB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OfflineModePlayer;
+			productName = OfflineModePlayer;
+			productReference = C1DDBCCC1D103DA2001AFA87 /* OfflineModePlayer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C1DDBCC41D103DA2001AFA87 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Deezer;
+				TargetAttributes = {
+					C1DDBCCB1D103DA2001AFA87 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = C1DDBCC71D103DA2001AFA87 /* Build configuration list for PBXProject "OfflineModePlayer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C1DDBCC31D103DA2001AFA87;
+			productRefGroup = C1DDBCCD1D103DA2001AFA87 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C1DDBCCB1D103DA2001AFA87 /* OfflineModePlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C1DDBCCA1D103DA2001AFA87 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1DDBCF41D1047B5001AFA87 /* MainWindow.xib in Resources */,
+				C1DDBCD61D103DA2001AFA87 /* Assets.xcassets in Resources */,
+				C1DDBCF01D1046D8001AFA87 /* PlaylistView.xib in Resources */,
+				C1DDBCD91D103DA3001AFA87 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C1DDBCC81D103DA2001AFA87 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C12358B41D192D3B0054F606 /* SBJsonStreamWriterState.m in Sources */,
+				C1DDBCF11D1046D8001AFA87 /* MainWindowController.m in Sources */,
+				C12358B31D192D3B0054F606 /* SBJsonStreamWriterAccumulator.m in Sources */,
+				C12358B01D192D3B0054F606 /* SBJsonStreamParserState.m in Sources */,
+				C1DDBCD41D103DA2001AFA87 /* main.m in Sources */,
+				C1DDBCF21D1046D8001AFA87 /* PlaylistViewController.m in Sources */,
+				C12358AE1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m in Sources */,
+				C16982D21D1BDD1B00A88774 /* DZRNative.m in Sources */,
+				C12358AC1D192D3B0054F606 /* SBJsonParser.m in Sources */,
+				C1DDBCE51D104100001AFA87 /* DebugHelper.m in Sources */,
+				C12358BE1D1949940054F606 /* JsonParserHelper.m in Sources */,
+				C12358DA1D196E3E0054F606 /* DZRTrack.m in Sources */,
+				C1DDBCD11D103DA2001AFA87 /* AppDelegate.m in Sources */,
+				C12358B51D192D3B0054F606 /* SBJsonWriter.m in Sources */,
+				C12358AD1D192D3B0054F606 /* SBJsonStreamParser.m in Sources */,
+				C12358AF1D192D3B0054F606 /* SBJsonStreamParserAdapter.m in Sources */,
+				C12358B21D192D3B0054F606 /* SBJsonStreamWriter.m in Sources */,
+				C12358B81D192D640054F606 /* JsonStreamParserDelegate.m in Sources */,
+				C12358B11D192D3B0054F606 /* SBJsonStreamTokeniser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C1DDBCD71D103DA3001AFA87 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C1DDBCD81D103DA3001AFA87 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C1DDBCDB1D103DA3001AFA87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C1DDBCDC1D103DA3001AFA87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C1DDBCDE1D103DA3001AFA87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = NativeSDK/Bins/Platforms/MacOSX;
+				HEADER_SEARCH_PATHS = (
+					NativeSDK/Bins/Platforms/MacOSX/libdeezer.framework/Headers,
+					OfflineModePlayer/External/SBJson,
+				);
+				INFOPLIST_FILE = OfflineModePlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.deezer.OfflineModePlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C1DDBCDF1D103DA3001AFA87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = NativeSDK/Bins/Platforms/MacOSX;
+				HEADER_SEARCH_PATHS = (
+					NativeSDK/Bins/Platforms/MacOSX/libdeezer.framework/Headers,
+					OfflineModePlayer/External/SBJson,
+				);
+				INFOPLIST_FILE = OfflineModePlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.deezer.OfflineModePlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C1DDBCC71D103DA2001AFA87 /* Build configuration list for PBXProject "OfflineModePlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1DDBCDB1D103DA3001AFA87 /* Debug */,
+				C1DDBCDC1D103DA3001AFA87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1DDBCDD1D103DA3001AFA87 /* Build configuration list for PBXNativeTarget "OfflineModePlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1DDBCDE1D103DA3001AFA87 /* Debug */,
+				C1DDBCDF1D103DA3001AFA87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C1DDBCC41D103DA2001AFA87 /* Project object */;
+}

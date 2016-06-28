@@ -9,7 +9,7 @@ This repository contains a set of samples that demonstrate the integration of th
 
 # Available Samples
 
-## NanoPlayer
+## [NanoPlayer][2]
 
 NanoPlayer is a C application which uses Deezer's Native SDK to play a song once a user was authenticated.
 
@@ -18,42 +18,16 @@ NanoPlayer is a C application which uses Deezer's Native SDK to play a song once
  - User authentication
  - Playing a Deezer song.
 
-### Build instructions
+## [OfflineModePlayer][3]
 
-* Download the latest version of the [Deezer Native SDK][1]
-* Unzip it and place the folder, renamed into NativeSDK, at the root of this repository, such as shown below:
-```
-<native-sdk-samples>
-├── NativeSDK
-│      ├── Bins
-│      └── Include
-├── NanoPlayer
-└── README.md
-```
+OfflineModePlayer is a MacOSX application which uses Deezer's Native SDK to enable offline mode playback of an album or a playlist once a user was authenticated.
 
-* To build the sample on Linux and Mac OS
-```
-> cd NanoPlayer
-> make
-```
+### Features
 
-* To build the sample on Windows
-
-Open `NanoPlayer.vcxproj` with Microsoft Visual Studio (2012 or upper).
-
-### Run this sample
-
-* On Linux and Mac OS
-
-(On Linux the application will need **_pulseaudio_** packaged installed.)
-
-```
-> ./NanoPlayer
-```
-
-* On Windows
-
-Run it through Microsoft Visual Studio debug tool or copy the Deezer Native SDK DLLs in the generated executable folder if you want to execute it in standalone.
+ - User authentication
+ - Offline mode playblack enabled for Deezer song list.
 
  [1]: http://developers.deezer.com/sdk/native
+ [2]: https://github.com/deezer/native-sdk-samples/tree/master/NanoPlayer
+ [3]: https://github.com/deezer/native-sdk-samples/tree/master/OfflineModePlayer
  [4]: http://developers.deezer.com/sdk/native/releasenotes/rss
