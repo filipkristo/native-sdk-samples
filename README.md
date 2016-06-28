@@ -5,6 +5,8 @@ Sample applications using the Deezer Native SDK.
 
 This repository contains a set of samples that demonstrate the integration of the Deezer Native Software Development Kit (SDK).
 
+**[NEW]** Stay tuned for new releases by subscribing to the [Native SDK’s release feed][4].
+
 # Available Samples
 
 ## NanoPlayer
@@ -54,3 +56,4 @@ Open `NanoPlayer.vcxproj` with Microsoft Visual Studio (2012 or upper).
 Run it through Microsoft Visual Studio debug tool or copy the Deezer Native SDK DLLs in the generated executable folder if you want to execute it in standalone.
 
  [1]: http://developers.deezer.com/sdk/native
+ [4]: http://developers.deezer.com/sdk/native/releasenotes/rss
