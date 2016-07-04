@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C11A9F0D1D130B5F009980DB /* libdeezer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C11A9F0A1D130813009980DB /* libdeezer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C12358AC1D192D3B0054F606 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358991D192D3B0054F606 /* SBJsonParser.m */; };
 		C12358AD1D192D3B0054F606 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C123589B1D192D3B0054F606 /* SBJsonStreamParser.m */; };
 		C12358AE1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = C123589D1D192D3B0054F606 /* SBJsonStreamParserAccumulator.m */; };
@@ -22,6 +21,7 @@
 		C12358BE1D1949940054F606 /* JsonParserHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358BD1D1949940054F606 /* JsonParserHelper.m */; };
 		C12358DA1D196E3E0054F606 /* DZRTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = C12358D91D196E3E0054F606 /* DZRTrack.m */; };
 		C138A7FB1D23C0A900899F79 /* libdeezer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C138A7FA1D23C0A900899F79 /* libdeezer.framework */; };
+		C13B78411D2A685300053087 /* libdeezer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C138A7FA1D23C0A900899F79 /* libdeezer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C16982D21D1BDD1B00A88774 /* DZRNative.m in Sources */ = {isa = PBXBuildFile; fileRef = C16982D11D1BDD1B00A88774 /* DZRNative.m */; };
 		C1DDBCD11D103DA2001AFA87 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCD01D103DA2001AFA87 /* AppDelegate.m */; };
 		C1DDBCD41D103DA2001AFA87 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C1DDBCD31D103DA2001AFA87 /* main.m */; };
@@ -41,14 +41,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C11A9F0D1D130B5F009980DB /* libdeezer.framework in CopyFiles */,
+				C13B78411D2A685300053087 /* libdeezer.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C11A9F0A1D130813009980DB /* libdeezer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libdeezer.framework; path = "/Users/CPicheney/DEV/libdeezer/apps/native-sdk-samples/NativeSDK/Bins/Platforms/MacOSX/libdeezer.framework"; sourceTree = "<absolute>"; };
 		C12358971D192D3B0054F606 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJson.h; path = OfflineModePlayer/External/SBJson/SBJson.h; sourceTree = "<group>"; };
 		C12358981D192D3B0054F606 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonParser.h; path = OfflineModePlayer/External/SBJson/SBJsonParser.h; sourceTree = "<group>"; };
 		C12358991D192D3B0054F606 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonParser.m; path = OfflineModePlayer/External/SBJson/SBJsonParser.m; sourceTree = "<group>"; };
