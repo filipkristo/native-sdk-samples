@@ -39,7 +39,7 @@ Open `NanoPlayer.vcxproj` with Microsoft Visual Studio (2012 or upper).
 (On Linux the application will need **_pulseaudio_** packaged installed.)
 
 ```
-> ./NanoPlayer
+> ./NanoPlayer dzmedia:///album/607845
 ```
 
 * On Windows

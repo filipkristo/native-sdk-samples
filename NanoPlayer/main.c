@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -16,11 +17,25 @@ static __inline int sleep(int s) {
 
 #define log(fmt, ...) printf("[%s:%d]" fmt, __FILE__, __LINE__, ##__VA_ARGS__);
 
-static int print_version   = true;
-static int print_device_id = true;
+typedef struct {
+    int                   nb_track_played;
+    bool                  is_playing;
+    char*                 sz_content_url;
+    int                   activation_count;
+    dz_connect_handle     dzconnect;
+    dz_player_handle      dzplayer;
+    dz_streaming_mode_t   streaming_mode;
+    dz_index_in_queuelist current_idx_in_queuelist;
+    dz_queuelist_repeat_mode_t repeat_mode;
+    bool                  is_shuffle_mode;
+} app_context;
 
-static int nb_track_to_play = 1; // This number includes the audio ads to play
-static int nb_track_played = 0;
+typedef app_context *app_context_handle;
+
+static int print_version    = true;
+static int is_shutting_down = false;
+static int print_device_id  = true;
+static app_context_handle app_ctxt = NULL;
 
 #define USER_ACCESS_TOKEN        "fr49mph7tV4KY3ukISkFHQysRpdCEbzb958dB320pM15OpFsQs" // Sample access token corresponding to a free user account, to be replaced by yours.
 #define YOUR_APPLICATION_ID      "180202"     // SET YOUR APPLICATION ID
@@ -31,12 +46,17 @@ static int nb_track_played = 0;
 #else
 #define USER_CACHE_PATH          "/var/tmp/dzrcache_NDK_SAMPLE" // SET THE USER CACHE PATH, This pasth must already exist
 #endif
-    
-static dz_connect_handle dzconnect;
-static dz_player_handle  dzplayer;
-static int activation_count   = 0;
-static char sz_track_url[256] = "dzmedia:///track/85509044";
 
+static void app_commands_display();
+static void app_commands_get_next();
+static void app_change_content(char * content);
+static void app_load_content();
+static void app_playback_start_or_stop();
+static void app_playback_pause_or_resume();
+static void app_playback_next();
+static void app_playback_previous();
+static void app_playback_toogle_repeat();
+static void app_playback_toogle_random();
 static void app_shutdown();
 
 static void dz_connect_on_deactivate(void* delegate,
@@ -48,8 +68,6 @@ static void dz_player_on_deactivate(void* delegate,
                                     dz_error_t status,
                                     dz_object_handle result);
 
-static void app_launch_play();
-
 // callback for dzconnect events
 static void app_connect_onevent_cb(dz_connect_handle handle,
                                    dz_connect_event_handle event,
@@ -59,8 +77,7 @@ static void app_player_onevent_cb(dz_player_handle handle,
                                   dz_player_event_handle event,
                                   void* supervisor);
 
-
-int main(void) {
+int main(int argc, char *argv[]) {
 
     struct dz_connect_configuration config;
     dz_error_t dzerr = DZ_ERROR_NO_ERROR;
@@ -82,93 +99,133 @@ int main(void) {
     log("--> Product BUILD ID:  %s\n", config.product_build_id);
     log("--> User Profile Path: %s\n", config.user_profile_path);
 
-    dzconnect = dz_connect_new(&config);
 
-    if (dzconnect == NULL) {
+    // Nanoplayer only supports one argument which is the content description
+    if (argc < 2) {
+        log("Please give the content as argument like:\n");
+        log("\t \"dzmedia:///track/10287076\"      (Single track example)\n");
+        log("\t \"dzmedia:///album/607845\"        (Album example)\n");
+        log("\t \"dzmedia:///playlist/1363560485\" (Playlist example)\n");
+        log("\t \"dzradio:///radio-223\"           (Radio example)\n");
+        log("\t \"dzradio:///user-743548285\"      (User Mix example)\n");
+        return -1;
+    }
+
+    app_ctxt = (app_context_handle)calloc(1,sizeof(app_context));
+
+    app_change_content(argv[1]);
+
+    app_ctxt->dzconnect = dz_connect_new(&config);
+
+    if (app_ctxt->dzconnect == NULL) {
         log("dzconnect null\n");
         return -1;
     }
 
     if (print_device_id) {
-        log("Device ID: %s\n", dz_connect_get_device_id(dzconnect));
+        log("Device ID: %s\n", dz_connect_get_device_id(app_ctxt->dzconnect));
     }
 
-    dzerr = dz_connect_debug_log_disable(dzconnect);
+    dzerr = dz_connect_debug_log_disable(app_ctxt->dzconnect);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_debug_log_disable error\n");
         return -1;
     }
 
-    dzerr = dz_connect_activate(dzconnect, NULL);
+    dzerr = dz_connect_activate(app_ctxt->dzconnect, NULL);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_activate error\n");
         return -1;
     }
-    activation_count++;
+    app_ctxt->activation_count++;
 
     /* Calling dz_connect_cache_path_set()
      * is mandatory in order to have the attended behavior */
-    dz_connect_cache_path_set(dzconnect, NULL, NULL, USER_CACHE_PATH);
+    dz_connect_cache_path_set(app_ctxt->dzconnect, NULL, NULL, USER_CACHE_PATH);
 
-    dzplayer = dz_player_new(dzconnect);
-    if (dzplayer == NULL) {
+    app_ctxt->dzplayer = dz_player_new(app_ctxt->dzconnect);
+    if (app_ctxt->dzplayer == NULL) {
         log("dzplayer null\n");
         return -1;
     }
 
-    dzerr = dz_player_activate(dzplayer, NULL);
+    dzerr = dz_player_activate(app_ctxt->dzplayer, NULL);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_player_activate error\n");
         return -1;
     }
-    activation_count++;
+    app_ctxt->activation_count++;
 
-    dzerr = dz_player_set_event_cb(dzplayer, app_player_onevent_cb);
+    dzerr = dz_player_set_event_cb(app_ctxt->dzplayer, app_player_onevent_cb);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_player_set_event_cb error\n");
         return -1;
     }
 
-    dzerr = dz_connect_set_access_token(dzconnect,NULL, NULL, USER_ACCESS_TOKEN);
+    dzerr = dz_player_set_output_volume(app_ctxt->dzplayer, NULL, NULL, 20);
+    if (dzerr != DZ_ERROR_NO_ERROR) {
+        log("dz_player_set_output_volume error\n");
+        return -1;
+    }
+
+    dzerr = dz_player_set_crossfading_duration(app_ctxt->dzplayer, NULL, NULL, 3000);
+    if (dzerr != DZ_ERROR_NO_ERROR) {
+        log("dz_player_set_crossfading_duration error\n");
+        return -1;
+    }
+
+    app_ctxt->repeat_mode = DZ_QUEUELIST_REPEAT_MODE_OFF;
+    app_ctxt->is_shuffle_mode = false;
+
+    dzerr = dz_connect_set_access_token(app_ctxt->dzconnect,NULL, NULL, USER_ACCESS_TOKEN);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_set_access_token error\n");
         return -1;
     }
 
     /* Calling dz_connect_offline_mode(FALSE) is mandatory to force the login */
-    dzerr = dz_connect_offline_mode(dzconnect, NULL, NULL, false);
+    dzerr = dz_connect_offline_mode(app_ctxt->dzconnect, NULL, NULL, false);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_offline_mode error\n");
         return -1;
     }
 
-    while (1) {
-        //log("- - - - wait until end of actions (c=%d)\n",activation_count);
-        sleep (1);
-        if (activation_count == 0) // exited normally
-            break;
+    while ((app_ctxt->activation_count > 0)) {
+        // Get the next user action only if not shutting down.
+        if (!is_shutting_down) {
+            app_commands_get_next();
+        }
     }
 
-    if (dzconnect) {
-        dz_object_release((dz_object_handle)dzconnect);
-        dzconnect = NULL;
+    if (app_ctxt->dzplayer) {
+        log("-- FREE PLAYER @ %p --\n",app_ctxt->dzplayer);
+        dz_object_release((dz_object_handle)app_ctxt->dzplayer);
+        app_ctxt->dzplayer = NULL;
     }
-    if (dzplayer) {
-        dz_object_release((dz_object_handle)dzplayer);
-        dzplayer = NULL;
+
+    if (app_ctxt->dzconnect) {
+        log("-- FREE CONNECT @ %p --\n",app_ctxt->dzconnect);
+        dz_object_release((dz_object_handle)app_ctxt->dzconnect);
+        app_ctxt->dzconnect = NULL;
     }
 
     log("-- shutdowned --\n");
+
+    if (app_ctxt) {
+        free(app_ctxt);
+        app_ctxt = NULL;
+    }
+
     return 0;
 }
 
 static void app_shutdown() {
-    log("SHUTDOWN (1/2) - dzplayer = %p\n",dzplayer);
-    if (dzplayer)
-        dz_player_deactivate(dzplayer, dz_player_on_deactivate, NULL);
-    log("SHUTDOWN (2/2) - dzconnect = %p\n",dzconnect);
-    if (dzconnect)
-        dz_connect_deactivate(dzconnect, dz_connect_on_deactivate, NULL);
+    log("SHUTDOWN (1/2) - dzplayer = %p\n",app_ctxt->dzplayer);
+    if (app_ctxt->dzplayer)
+        dz_player_deactivate(app_ctxt->dzplayer, dz_player_on_deactivate, NULL);
+    log("SHUTDOWN (2/2) - dzconnect = %p\n",app_ctxt->dzconnect);
+    if (app_ctxt->dzconnect)
+        dz_connect_deactivate(app_ctxt->dzconnect, dz_connect_on_deactivate, NULL);
 }
 
 void app_connect_onevent_cb(dz_connect_handle handle,
@@ -195,7 +252,7 @@ void app_connect_onevent_cb(dz_connect_handle handle,
 
         case DZ_CONNECT_EVENT_USER_LOGIN_OK:
             log("++++ CONNECT_EVENT ++++ USER_LOGIN_OK\n");
-            app_launch_play();
+            app_load_content();
             break;
 
         case DZ_CONNECT_EVENT_USER_NEW_OPTIONS:
@@ -233,57 +290,159 @@ void app_connect_onevent_cb(dz_connect_handle handle,
     }
 }
 
-static void app_launch_play() {
-    log("LOAD & PLAY => %s\n", sz_track_url);
-    dz_player_load(dzplayer, NULL, NULL, sz_track_url);
-    dz_player_play(dzplayer, NULL, NULL,
-                   DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
-                   DZ_TRACKLIST_AUTOPLAY_MANUAL,
-                   0);
+static void app_change_content(char * content) {
+
+    if (app_ctxt->sz_content_url) {
+        free(app_ctxt->sz_content_url);
+    }
+    app_ctxt->sz_content_url = (char*)calloc(1,strlen(content)+1);
+    memccpy(app_ctxt->sz_content_url, content, 1, strlen(content));
+
+    log("CHANGE => %s\n", app_ctxt->sz_content_url);
 }
+
+static void app_load_content() {
+
+    log("LOAD => %s\n", app_ctxt->sz_content_url);
+    dz_player_load(app_ctxt->dzplayer,
+                   NULL,
+                   NULL,
+                   app_ctxt->sz_content_url);
+}
+
+static void app_playback_start_or_stop() {
+
+    if (!app_ctxt->is_playing) {
+        log("PLAY track n° %d of => %s\n", app_ctxt->nb_track_played, app_ctxt->sz_content_url);
+        if (app_ctxt->streaming_mode == DZ_STREAMING_MODE_ONDEMAND) {
+            dz_player_play(app_ctxt->dzplayer, NULL, NULL,
+                           DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
+                           DZ_INDEX_IN_QUEUELIST_CURRENT);
+        } else if (app_ctxt->streaming_mode == DZ_STREAMING_MODE_RADIO) {
+            dz_player_play(app_ctxt->dzplayer, NULL, NULL,
+                           DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
+                           DZ_INDEX_IN_QUEUELIST_CURRENT);
+        }
+    } else {
+        log("STOP => %s\n", app_ctxt->sz_content_url);
+        dz_player_stop(app_ctxt->dzplayer, NULL, NULL);
+    }
+}
+
+static void app_playback_pause_or_resume() {
+
+    if (app_ctxt->is_playing) {
+        log("PAUSE track n° %d of => %s\n", app_ctxt->nb_track_played, app_ctxt->sz_content_url);
+        dz_player_pause(app_ctxt->dzplayer, NULL, NULL);
+    } else {
+        log("RESUME track n° %d of => %s\n", app_ctxt->nb_track_played, app_ctxt->sz_content_url);
+        dz_player_resume(app_ctxt->dzplayer, NULL, NULL);
+    }
+}
+
+static void app_playback_toogle_repeat() {
+
+
+    app_ctxt->repeat_mode++;
+    if (app_ctxt->repeat_mode > DZ_QUEUELIST_REPEAT_MODE_ALL) {
+        app_ctxt->repeat_mode = DZ_QUEUELIST_REPEAT_MODE_OFF;
+    }
+
+    log("REPEAT mode => %d\n", app_ctxt->repeat_mode);
+
+    dz_player_set_repeat_mode(app_ctxt->dzplayer,
+                              NULL,
+                              NULL,
+                              app_ctxt->repeat_mode);
+    return;
+}
+
+static void app_playback_toogle_random() {
+
+    app_ctxt->is_shuffle_mode = (app_ctxt->is_shuffle_mode?false:true);
+
+    log("SHUFFLE mode => %s\n", app_ctxt->is_shuffle_mode?"ON":"OFF");
+
+    dz_player_enable_shuffle_mode(app_ctxt->dzplayer,
+                                  NULL,
+                                  NULL,
+                                  app_ctxt->is_shuffle_mode);
+}
+
+static void app_playback_next() {
+
+    log("NEXT => %s\n", app_ctxt->sz_content_url);
+    dz_player_play(app_ctxt->dzplayer,
+                   NULL,
+                   NULL,
+                   DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
+                   DZ_INDEX_IN_QUEUELIST_NEXT);
+}
+
+static void app_playback_previous() {
+    log("PREVIOUS => %s\n", app_ctxt->sz_content_url);
+    dz_player_play(app_ctxt->dzplayer,
+                   NULL,
+                   NULL,
+                   DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
+                   DZ_INDEX_IN_QUEUELIST_PREVIOUS);
+
+}
+
 
 void app_player_onevent_cb( dz_player_handle       handle,
                             dz_player_event_handle event,
-                            void *                 supervisor)
-{
-    dz_streaming_mode_t  streaming_mode;
-    dz_index_in_playlist idx;
+                            void *                 supervisor) {
+
+    dz_streaming_mode_t   streaming_mode;
+    dz_index_in_queuelist idx;
 
     dz_player_event_t type = dz_player_event_get_type(event);
-    
-    if (!dz_player_event_get_playlist_context(event, &streaming_mode, &idx)) {
+
+    if (!dz_player_event_get_queuelist_context(event, &streaming_mode, &idx)) {
         streaming_mode = DZ_STREAMING_MODE_ONDEMAND;
-        idx = -1;
+        idx = DZ_INDEX_IN_QUEUELIST_INVALID;
+    }
+
+    // Update the streaming mode if relevant
+    if (streaming_mode != DZ_STREAMING_MODE_UNKNOWN) {
+        app_ctxt->streaming_mode = streaming_mode;
+        app_ctxt->current_idx_in_queuelist = idx;
     }
 
     switch (type) {
-    case DZ_PLAYER_EVENT_LIMITATION_FORCED_PAUSE:
-        log("==== PLAYER_EVENT ==== LIMITATION_FORCED_PAUSE for idx: %d\n", idx);
-        break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_TRACK_NO_RIGHT:
-        log("==== PLAYER_EVENT ==== PLAYLIST_TRACK_NO_RIGHT for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_LIMITATION_FORCED_PAUSE:
+            log("==== PLAYER_EVENT ==== LIMITATION_FORCED_PAUSE for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_NEED_NATURAL_NEXT:
-        log("==== PLAYER_EVENT ==== PLAYLIST_NEED_NATURAL_NEXT for idx: %d\n", idx);
-        app_launch_play();
-        break;
+        case DZ_PLAYER_EVENT_QUEUELIST_LOADED:
+            log("==== PLAYER_EVENT ==== QUEUELIST_LOADED for idx: %d\n", idx);
+            //app_playback_start_or_stop();
+            break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE:
-        log("==== PLAYER_EVENT ==== PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_QUEUELIST_NO_RIGHT:
+            log("==== PLAYER_EVENT ==== QUEUELIST_NO_RIGHT for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS:
-        log("==== PLAYER_EVENT ==== PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d\n", idx);
-        dz_player_play_audioads(dzplayer, NULL, NULL);
-        break;
+        case DZ_PLAYER_EVENT_QUEUELIST_NEED_NATURAL_NEXT:
+            log("==== PLAYER_EVENT ==== QUEUELIST_NEED_NATURAL_NEXT for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_SKIP_NO_RIGHT:
-        log("==== PLAYER_EVENT ==== PLAYLIST_SKIP_NO_RIGHT for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE:
+            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_PLAYLIST_TRACK_SELECTED:
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS:
+            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d\n", idx);
+            dz_player_play_audioads(app_ctxt->dzplayer, NULL, NULL);
+            break;
+
+        case DZ_PLAYER_EVENT_QUEUELIST_SKIP_NO_RIGHT:
+            log("==== PLAYER_EVENT ==== QUEUELIST_SKIP_NO_RIGHT for idx: %d\n", idx);
+            break;
+
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_SELECTED:
         {
             bool is_preview;
             bool can_pause_unpause;
@@ -299,67 +458,74 @@ void app_player_onevent_cb( dz_player_handle       handle,
             selected_dzapiinfo = dz_player_event_track_selected_dzapiinfo(event);
             next_dzapiinfo = dz_player_event_track_selected_next_track_dzapiinfo(event);
 
-            log("==== PLAYER_EVENT ==== PLAYLIST_TRACK_SELECTED for idx: %d - is_preview:%d\n", idx, is_preview);
+            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_SELECTED for idx: %d - is_preview:%d\n", idx, is_preview);
             log("\tcan_pause_unpause:%d can_seek:%d nb_skip_allowed:%d\n", can_pause_unpause, can_seek, nb_skip_allowed);
             if (selected_dzapiinfo)
-            log("\tnow:%s\n", selected_dzapiinfo);
+                log("\tnow:%s\n", selected_dzapiinfo);
             if (next_dzapiinfo)
-            log("\tnext:%s\n", next_dzapiinfo);
-         }
-        nb_track_played++;
-        break;
-
-    case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY:
-        log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY for idx: %d\n", idx);
-        break;
-
-    case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY_AFTER_SEEK:
-        log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY_AFTER_SEEK for idx: %d\n", idx);
-        break;
-
-    case DZ_PLAYER_EVENT_RENDER_TRACK_START_FAILURE:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_START_FAILURE for idx: %d\n", idx);
-        break;
-
-    case DZ_PLAYER_EVENT_RENDER_TRACK_START:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_START for idx: %d\n", idx);
-        break;
-
-    case DZ_PLAYER_EVENT_RENDER_TRACK_END:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_END for idx: %d\n", idx);
-        log("\tnb_track_to_play : %d\tnb_track_played : %d\n",nb_track_to_play,nb_track_played);
-        if (nb_track_to_play != -1 &&  // unlimited
-            nb_track_to_play == nb_track_played) {
-            app_shutdown();
-        } else {
-            app_launch_play();
+                log("\tnext:%s\n", next_dzapiinfo);
         }
-        break;
 
-    case DZ_PLAYER_EVENT_RENDER_TRACK_PAUSED:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_PAUSED for idx: %d\n", idx);
-        break;
+            app_ctxt->nb_track_played++;
+            break;
 
-    case DZ_PLAYER_EVENT_RENDER_TRACK_UNDERFLOW:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_UNDERFLOW for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY:
+            log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_RENDER_TRACK_RESUMED:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_RESUMED for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY_AFTER_SEEK:
+            log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY_AFTER_SEEK for idx: %d\n", idx);
+            break;
 
-    case DZ_PLAYER_EVENT_RENDER_TRACK_SEEKING:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_SEEKING for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_RENDER_TRACK_START_FAILURE:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_START_FAILURE for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            break;
 
-    case DZ_PLAYER_EVENT_RENDER_TRACK_REMOVED:
-        log("==== PLAYER_EVENT ==== RENDER_TRACK_REMOVED for idx: %d\n", idx);
-        break;
+        case DZ_PLAYER_EVENT_RENDER_TRACK_START:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_START for idx: %d\n", idx);
+            app_ctxt->is_playing = true;
+            break;
 
-    case DZ_PLAYER_EVENT_UNKNOWN:
-    default:
-        log("==== PLAYER_EVENT ==== UNKNOWN or default (type = %d)\n",type);
-        break;
+        case DZ_PLAYER_EVENT_RENDER_TRACK_END:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_END for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            log("- nb_track_played : %d\n",app_ctxt->nb_track_played);
+            // Detect if we come from from playing an ad, if yes restart automatically the playback.
+            if (idx == DZ_INDEX_IN_QUEUELIST_INVALID) {
+                app_playback_start_or_stop();
+            }
+            break;
+
+        case DZ_PLAYER_EVENT_RENDER_TRACK_PAUSED:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_PAUSED for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            break;
+
+        case DZ_PLAYER_EVENT_RENDER_TRACK_UNDERFLOW:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_UNDERFLOW for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            break;
+
+        case DZ_PLAYER_EVENT_RENDER_TRACK_RESUMED:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_RESUMED for idx: %d\n", idx);
+            app_ctxt->is_playing = true;
+            break;
+            
+        case DZ_PLAYER_EVENT_RENDER_TRACK_SEEKING:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_SEEKING for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            break;
+            
+        case DZ_PLAYER_EVENT_RENDER_TRACK_REMOVED:
+            log("==== PLAYER_EVENT ==== RENDER_TRACK_REMOVED for idx: %d\n", idx);
+            app_ctxt->is_playing = false;
+            break;
+            
+        case DZ_PLAYER_EVENT_UNKNOWN:
+        default:
+            log("==== PLAYER_EVENT ==== UNKNOWN or default (type = %d)\n",type);
+            break;
     }
 }
 
@@ -367,18 +533,98 @@ static void dz_connect_on_deactivate(void*            delegate,
                                      void*            operation_userdata,
                                      dz_error_t       status,
                                      dz_object_handle result) {
-    activation_count--;
+    app_ctxt->activation_count--;
     log("CONNECT deactivated - c = %d with status = %d\n",
-        activation_count,
+        app_ctxt->activation_count,
         status);
 }
 
-static void dz_player_on_deactivate(void* delegate,
-                                    void* operation_userdata,
-                                    dz_error_t status,
+static void dz_player_on_deactivate(void*            delegate,
+                                    void*            operation_userdata,
+                                    dz_error_t       status,
                                     dz_object_handle result) {
-    activation_count--;
+    app_ctxt->activation_count--;
     log("PLAYER deactivated - c = %d with status = %d\n",
-        activation_count,
+        app_ctxt->activation_count,
         status);
 }
+
+static void app_commands_display() {
+
+    log("\n#########  MENU  #########\n");
+    log("   - Please press key for comands:  -\n");
+    log("  P : PLAY / PAUSE\n");
+    log("  S : START/STOP\n");
+    log("  + : NEXT\n");
+    log("  - : PREVIOUS\n");
+    log("  R : NEXT REPEAT MODE\n");
+    log("  ? : TOGGLE SHUFFLE MODE\n");
+    log("  Q : QUIT\n");
+    log("  [1-4] : LOAD CONTENT [1-4]\n");
+    log("\n##########################\n\n");
+    
+}
+static void app_commands_get_next() {
+
+    char c = getchar();
+
+    if (c == '\n') {
+        // skip final end of line char
+        return;
+    }
+
+    app_commands_display();
+
+    switch (c) {
+        case 'S':
+            app_playback_start_or_stop();
+            break;
+
+        case 'P':
+            app_playback_pause_or_resume();
+            break;
+
+        case '+':
+            app_playback_next();
+            break;
+
+        case '-':
+            app_playback_previous();
+            break;
+
+        case 'R':
+            app_playback_toogle_repeat();
+            break;
+
+        case '?':
+            app_playback_toogle_random();
+            break;
+
+        case 'Q':
+            is_shutting_down = true;
+            app_shutdown();
+            break;
+        case '1':
+            app_change_content("dzmedia:///album/607845");
+            app_load_content();
+            break;
+        case '2':
+            app_change_content("dzmedia:///playlist/1363560485");
+            app_load_content();
+            break;
+        case '3':
+            app_change_content("dzradio:///user-743548285");
+            app_load_content();
+            break;
+        case '4':
+            app_change_content("dzmedia:///track/10287076");
+            app_load_content();
+            break;
+
+        default:
+            log(" - Command [%c] not recognised -\n",c);
+            app_commands_display();
+            break;
+    }
+}
+
