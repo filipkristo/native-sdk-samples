@@ -7,6 +7,7 @@ dz_onevent_cb = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
 dz_connect_crash_reporting_delegate = CFUNCTYPE(c_bool)
 void_func = CFUNCTYPE(None, c_void_p)
 activation_count = 0
+libdeezer = cdll.LoadLibrary("libdeezer.so")
 
 
 class dz_connect_configuration(Structure):
@@ -21,6 +22,65 @@ class dz_connect_configuration(Structure):
         ("dz_connect_crash_reporting_delegate", c_void_p)
     ]
 
+# TODO: Find an elegant way to do that
+class ConnectionInfo:
+    def __init__(self,
+                 app_id = "",
+                 product_id = "",
+                 product_build_id = "",
+                 user_profile_path = "/var/tmp/dzrcache_NDK_SAMPLE",
+                 dz_connect_onevent_cb = None,
+                 anonymous_blob = None,
+                 dz_connect_crash_reporting_delegate = None
+                 ):
+        self.app_id = app_id
+        self.product_id = product_id
+        self.product_build_id = product_build_id
+        self.user_profile_path = user_profile_path
+        self.dz_connect_onevent_cb = dz_connect_onevent_cb
+        self.anonymous_blob = anonymous_blob
+        self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate
+
+
+def init_connection(connection_info):
+    """Initialize connection info and return the connection handler"""
+    # TODO: See ConnectionInfo TODO
+    config = dz_connect_configuration(
+        c_char_p(connection_info.app_id),
+        c_char_p(connection_info.product_id),
+        c_char_p(connection_info.product_build_id),
+        c_char_p(connection_info.user_profile_path),
+        c_void_p(connection_info.dz_connect_onevent_cb),
+        c_void_p(connection_info.anonymous_blob),
+        c_void_p(connection_info.dz_connect_crash_reporting_delegate)
+    )
+    connect_handle = libdeezer.dz_connect_new(byref(config))
+    if not connect_handle:
+        pass  # TODO: Error
+    return connect_handle
+
+
+def get_device_id(connect_handle):
+    return libdeezer.dz_connect_get_device_id(connect_handle)
+
+
+def debug_log_disable(connect_handle):
+    if libdeezer.dz_connect_debug_log_disable(connect_handle):
+        pass  # TODO: Error
+
+
+# TODO: handle user_data c cast
+def connection_activate(connect_handle, user_data=None):
+    error = libdeezer.dz_connect_activate(connect_handle, user_data)
+    if error:
+        pass  # TODO: Error
+
+
+# TODO: handle last two args c cast
+def connection_cache_path_set(connect_handle, user_cache_path, activity_operation_cb=None, operation_userdata=None):
+    libdeezer.dz_connect_cache_path_set(connect_handle, activity_operation_cb, operation_userdata,
+                                        c_char_p(user_cache_path))
+
 
 def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
     print "I am the player event callback"
@@ -30,7 +90,6 @@ def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
 def main():
     global activation_count
     # Load libdeezer
-    libdeezer = cdll.LoadLibrary("libdeezer.so")
     # Identifiers
     user_access_token = "frqsykQXDPpOXbcq1u9B3PQ2q8DwM1JbjqfSFExSgsfgaY7ZuQj"  # SET your user access token
     your_application_id = "190262"  # SET your application id
@@ -38,40 +97,20 @@ def main():
     your_application_version = "00001"  # SET your application version
     # TODO: WIN32 cache path
     user_cache_path = "/var/tmp/dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
-
-    def connect_cb(a, b, c):
-        print "I am the connect callback"
-        return 0
-
-    def error_cb():
-        print "I am the error callback"
-        return 0
-
-    config = dz_connect_configuration(
+    config = ConnectionInfo(
         your_application_id,
         your_application_name,
         your_application_version,
         user_cache_path,
-        c_void_p(0),
-        c_void_p(0),
-        c_void_p(0)
+        0,
+        0,
+        0
     )
-
-    connect_handle = libdeezer.dz_connect_new(byref(config))
-    if not connect_handle:
-        print "Deezer connect handle was not initialized properly."
-        return 1
-    print "Device ID:", libdeezer.dz_connect_get_device_id(connect_handle)
-    """
-    connect = libdeezer.dz_connect_debug_log_disable(connect_handle)
-    if connect != 0:
-        print "Failed to activate connection"
-    """
-    connect = libdeezer.dz_connect_activate(connect_handle, None)
-    if connect != 0:
-        print "Failed to activate connection"
-    activation_count += 1
-    libdeezer.dz_connect_cache_path_set(connect_handle, None, None, c_char_p(user_cache_path))
+    connect_handle = init_connection(config)
+    print "Device ID:", get_device_id(connect_handle)
+    debug_log_disable(connect_handle)
+    connection_activate(connect_handle)
+    connection_cache_path_set()
     player = libdeezer.dz_player_new(connect_handle)
     print type(player)
     if not player:
