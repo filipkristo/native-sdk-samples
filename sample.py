@@ -32,7 +32,7 @@ def main():
     # Load libdeezer
     libdeezer = cdll.LoadLibrary("libdeezer.so")
     # Identifiers
-    user_access_token = "fru8j4CtsuhoUkO5SXVxW3bZyMzlbZq1rbnCPPTVVkHHtNcDrtG"  # SET your user access token
+    user_access_token = "frqsykQXDPpOXbcq1u9B3PQ2q8DwM1JbjqfSFExSgsfgaY7ZuQj"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -86,12 +86,15 @@ def main():
     if connect != 0:
         print "Failed to set access token"
     connect = libdeezer.dz_connect_offline_mode(connect_handle, None, None, c_bool(False))  # error callback
+    time.sleep(2)  # wait for login (ugly)
     if connect != 0:
         print "Failed to connect offline mode"
     connect = libdeezer.dz_player_load(player, None, None, "dzmedia:///track/3135556")
     if connect != 0:
         print "Failed to connect offline mode"
     connect = libdeezer.dz_player_play(player, None, None, 1, 1, 0)
+    if connect != 0:
+        print "Failed to play song"
     while 1:
         time.sleep(0.001)
     return 0
