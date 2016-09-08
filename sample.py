@@ -78,6 +78,17 @@ class ConnectionInfo:
         libdeezer.dz_connect_cache_path_set(self.connect_handle, activity_operation_cb, operation_userdata,
                                             c_char_p(user_cache_path))
 
+    # TODO: handle last two args c cast
+    def set_access_token(self, user_access_token, activity_operation_cb=None, operation_user_data=None):
+        if libdeezer.dz_connect_set_access_token(self.connect_handle, activity_operation_cb,
+                                                 operation_user_data, c_char_p(user_access_token)):
+            pass  # TODO: Error
+
+    def connect_offline_mode(self, activity_operation_cb=None, operation_userdata=None, offline_mode_forced=False):
+        if libdeezer.dz_connect_offline_mode(self.connect_handle, activity_operation_cb,
+                                             operation_userdata, c_bool(offline_mode_forced)):
+            pass  # TODO: Error
+
 
 class Player:
     def __init__(self, connect_handle):
@@ -93,6 +104,10 @@ class Player:
     # TODO: handle supervisor argument type
     def activate(self, supervisor=None):
         if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
+            pass  # TODO: Error
+
+    def set_event_cb(self, cb):
+        if libdeezer.dz_player_set_event_cb(self.dz_player, dz_onevent_cb(cb)):
             pass  # TODO: Error
 
 
@@ -120,22 +135,16 @@ def main():
         0,
         0
     )
-    config.get_device_id()
+    print "Device ID:", config.get_device_id()
     config.debug_log_disable()
     config.activate()
     config.cache_path_set(user_cache_path)
     player = Player(config.connect_handle)  # TODO: Getter ?
     player.activate()
-    connect = libdeezer.dz_player_set_event_cb(player, dz_onevent_cb(connect_cb))
-    if connect != 0:
-        print "Failed to set event callback"
-    connect = libdeezer.dz_connect_set_access_token(connect_handle, None, None, c_char_p(user_access_token))
-    if connect != 0:
-        print "Failed to set access token"
-    connect = libdeezer.dz_connect_offline_mode(connect_handle, None, None, c_bool(False))  # error callback
+    player.set_event_cb(player_event_cb)
+    config.set_access_token(user_access_token)
+    config.connect_offline_mode()
     time.sleep(2)  # wait for login (ugly)
-    if connect != 0:
-        print "Failed to connect offline mode"
     connect = libdeezer.dz_player_load(player, None, None, "dzmedia:///track/3135556")
     if connect != 0:
         print "Failed to connect offline mode"
