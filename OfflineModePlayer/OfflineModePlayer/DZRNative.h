@@ -13,7 +13,6 @@
 #import "deezer-connect.h"
 #import "deezer-offline.h"
 #import "deezer-player.h"
-#import "JsonParserHelper.h"
 
 #import "DZRTrack.h"
 

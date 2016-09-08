@@ -12,9 +12,6 @@
 #import "deezer-connect.h"
 #import "deezer-api.h"
 
-#import "SBJsonParser.h"
-#import "SBJsonWriter.h"
-
 NSString *const kMyApplicationID      = @"180202";            // SET YOUR APPLICATION ID
 NSString *const kMyApplicationName    = @"OfflineModePlayer"; // SET YOUR APPLICATION NAME
 NSString *const kMyApplicationVersion = @"00001";             // SET YOUR APPLICATION VERSION
@@ -56,7 +53,16 @@ void libdeezer_API_request_result_cb(dz_api_request_processing_handle request,
 
     [tracksList removeAllObjects];
 
-    NSDictionary* albumTracksData = (__bridge NSDictionary*)responseData;
+    NSData *nsdata = [[NSData alloc]
+                      initWithBytesNoCopy:(void*)responseData
+                      length:strlen(responseData)
+                      freeWhenDone:NO];
+
+    NSError            *e = nil;
+    NSDictionary *albumTracksData = [NSJSONSerialization
+                                     JSONObjectWithData: nsdata
+                                     options: NSJSONReadingMutableContainers
+                                     error: &e];
 
     NSArray *tracks = albumTracksData[@"data"];
     NSUInteger length = [tracks count];
@@ -368,7 +374,6 @@ void libdeezer_offline_sync_state_cb(void* supervisor,
     dispatch_async(dispatch_get_main_queue(), ^ {
 
         dz_offline_sync_state_t syncState;
-        NSDictionary *playlistState = nil;
 
         if (offlineState) {
             const char *sz_state = dz_offline_state_to_json(offlineState);
@@ -376,13 +381,16 @@ void libdeezer_offline_sync_state_cb(void* supervisor,
             if (sz_state == NULL) {
                 syncState = DZ_OFFLINE_SYNC_STATE_UNSYNCED;
             } else {
-                NSData *nsdata = [[NSData alloc]
-                                  initWithBytesNoCopy:(void*)sz_state
-                                  length:strlen(sz_state)
-                                  freeWhenDone:NO];
-                SBJsonParser *parser = [[SBJsonParser alloc] init];
+                NSData               *nsdata = [[NSData alloc]
+                                                initWithBytesNoCopy:(void*)sz_state
+                                                length:strlen(sz_state)
+                                                freeWhenDone:NO];
 
-                playlistState = [parser objectWithData:nsdata];
+                NSError                   *e = nil;
+                NSDictionary *playlistState  = [NSJSONSerialization
+                                                JSONObjectWithData: nsdata
+                                                options: NSJSONReadingMutableContainers
+                                                error: &e];
 
                 DebugLog(@"playlist state : %@", playlistState);
 
@@ -568,7 +576,7 @@ void libdeezer_offline_sync_state_cb(void* supervisor,
 
     dzr_request_process = dz_api_request_processing_async(dzConnect,
                                                           dzr_request,
-                                                          json_parser_singleton(),
+                                                          NULL,
                                                           libdeezer_API_request_result_cb,
                                                           (__bridge void *)(self));
     // Now we can release the request
@@ -595,15 +603,12 @@ void libdeezer_offline_sync_state_cb(void* supervisor,
 
         // Create a JSON of track IDs we want to be synchronized.
         // This JSON will be provided to dz_offline_synchronize.
-        NSMutableDictionary *syncObj;
-        NSString * syncJson;
-
-        syncObj = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                   tracksIds, @"tracks",
-                   nil];
-
-        syncJson = [[[SBJsonWriter alloc
-                      ] init] stringWithObject:syncObj];
+        NSMutableDictionary *syncObj = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                        tracksIds, @"tracks",
+                                        nil];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:syncObj options:NSJSONWritingPrettyPrinted error:&writeError];
+        NSString * syncJson = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 
         DebugLog(@"SYNCING %@ from %@", syncJson, dzLocalContentDescription);
 
