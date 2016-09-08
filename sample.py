@@ -3,14 +3,14 @@
 from ctypes import *
 import time
 
-dz_onevent_cb = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
-dz_connect_crash_reporting_delegate = CFUNCTYPE(c_bool)
+dz_onevent_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
 void_func = CFUNCTYPE(None, c_void_p)
 activation_count = 0
 libdeezer = cdll.LoadLibrary("libdeezer.so")
 
 
-class dz_connect_configuration(Structure):
+class DZConnectConfiguration(Structure):
     _pack_ = 1
     _fields_ = [
         ("app_id", c_char_p),
@@ -24,15 +24,15 @@ class dz_connect_configuration(Structure):
 
 
 # TODO: Find an elegant way to do that
-class ConnectionInfo:
+class Connection:
     def __init__(self,
-                 app_id = "",
-                 product_id = "",
-                 product_build_id = "",
-                 user_profile_path = "/var/tmp/dzrcache_NDK_SAMPLE",
-                 dz_connect_onevent_cb = None,
-                 anonymous_blob = None,
-                 dz_connect_crash_reporting_delegate = None
+                 app_id="",
+                 product_id="",
+                 product_build_id="",
+                 user_profile_path="/var/tmp/dzrcache_NDK_SAMPLE",
+                 dz_connect_onevent_cb=None,
+                 anonymous_blob=None,
+                 dz_connect_crash_reporting_delegate=None
                  ):
         self.app_id = app_id
         self.product_id = product_id
@@ -47,7 +47,7 @@ class ConnectionInfo:
     def _init_handle(self):
         """Initialize connection info and return the connection handler"""
         # TODO: See ConnectionInfo TODO
-        config = dz_connect_configuration(
+        config = DZConnectConfiguration(
             c_char_p(self.app_id),
             c_char_p(self.product_id),
             c_char_p(self.product_build_id),
@@ -107,7 +107,17 @@ class Player:
             pass  # TODO: Error
 
     def set_event_cb(self, cb):
-        if libdeezer.dz_player_set_event_cb(self.dz_player, dz_onevent_cb(cb)):
+        if libdeezer.dz_player_set_event_cb(self.dz_player, dz_onevent_cb_func(cb)):
+            pass  # TODO: Error
+
+    def load(self, tracklist_data, activity_operation_cb=None, operation_user_data=None):
+        if libdeezer.dz_player_load(self.dz_player, activity_operation_cb, operation_user_data,
+                                    tracklist_data):
+            pass  # TODO: Error
+
+    def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
+        if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
+                                    command, mode, index):
             pass  # TODO: Error
 
 
@@ -118,7 +128,6 @@ def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
 
 def main():
     global activation_count
-    # Load libdeezer
     # Identifiers
     user_access_token = "frqsykQXDPpOXbcq1u9B3PQ2q8DwM1JbjqfSFExSgsfgaY7ZuQj"  # SET your user access token
     your_application_id = "190262"  # SET your application id
@@ -126,7 +135,7 @@ def main():
     your_application_version = "00001"  # SET your application version
     # TODO: WIN32 cache path
     user_cache_path = "/var/tmp/dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
-    config = ConnectionInfo(
+    connection = Connection(
         your_application_id,
         your_application_name,
         your_application_version,
@@ -135,22 +144,18 @@ def main():
         0,
         0
     )
-    print "Device ID:", config.get_device_id()
-    config.debug_log_disable()
-    config.activate()
-    config.cache_path_set(user_cache_path)
-    player = Player(config.connect_handle)  # TODO: Getter ?
+    print "Device ID:", connection.get_device_id()
+    connection.debug_log_disable()
+    connection.activate()
+    connection.cache_path_set(user_cache_path)
+    player = Player(connection.connect_handle)  # TODO: Getter ?
     player.activate()
     player.set_event_cb(player_event_cb)
-    config.set_access_token(user_access_token)
-    config.connect_offline_mode()
+    connection.set_access_token(user_access_token)
+    connection.connect_offline_mode()
     time.sleep(2)  # wait for login (ugly)
-    connect = libdeezer.dz_player_load(player, None, None, "dzmedia:///track/3135556")
-    if connect != 0:
-        print "Failed to connect offline mode"
-    connect = libdeezer.dz_player_play(player, None, None, 1, 1, 0)
-    if connect != 0:
-        print "Failed to play song"
+    player.load("dzmedia:///track/3135556")
+    player.play()
     while 1:
         time.sleep(0.001)
     return 0
