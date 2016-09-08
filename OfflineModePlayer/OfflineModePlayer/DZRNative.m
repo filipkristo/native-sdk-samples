@@ -156,11 +156,11 @@ void libdeezer_player_event_cb(dz_player_handle       handle,
                                void *                 supervisor)
 {
     dz_streaming_mode_t  streaming_mode;
-    dz_index_in_playlist idx;
+    dz_index_in_queuelist idx;
     
     dz_player_event_t type = dz_player_event_get_type(event);
     
-    if (!dz_player_event_get_playlist_context(event, &streaming_mode, &idx)) {
+    if (!dz_player_event_get_queuelist_context(event, &streaming_mode, &idx)) {
         streaming_mode = DZ_STREAMING_MODE_ONDEMAND;
         idx = -1;
     }
@@ -170,29 +170,29 @@ void libdeezer_player_event_cb(dz_player_handle       handle,
             DebugLog(@"==== PLAYER_EVENT ==== LIMITATION_FORCED_PAUSE for idx: %d", idx);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_TRACK_NO_RIGHT:
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_TRACK_NO_RIGHT for idx: %d", idx);
+        case DZ_PLAYER_EVENT_QUEUELIST_NO_RIGHT:
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_NO_RIGHT for idx: %d", idx);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_NEED_NATURAL_NEXT:
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_NEED_NATURAL_NEXT for idx: %d", idx);
+        case DZ_PLAYER_EVENT_QUEUELIST_NEED_NATURAL_NEXT:
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_NEED_NATURAL_NEXT for idx: %d", idx);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE:
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d", idx);
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE:
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d", idx);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS:
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d", idx);
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS:
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d", idx);
             // TODO Check we have a dzPlayer instance and play the audioads to unlock the next track playback.
             //dz_player_play_audioads(dzPlayer, NULL, NULL);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_SKIP_NO_RIGHT:
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_SKIP_NO_RIGHT for idx: %d", idx);
+        case DZ_PLAYER_EVENT_QUEUELIST_SKIP_NO_RIGHT:
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_SKIP_NO_RIGHT for idx: %d", idx);
             break;
             
-        case DZ_PLAYER_EVENT_PLAYLIST_TRACK_SELECTED:
+        case DZ_PLAYER_EVENT_QUEUELIST_TRACK_SELECTED:
         {
             bool is_preview;
             bool can_pause_unpause;
@@ -208,7 +208,7 @@ void libdeezer_player_event_cb(dz_player_handle       handle,
             selected_dzapiinfo = dz_player_event_track_selected_dzapiinfo(event);
             next_dzapiinfo = dz_player_event_track_selected_next_track_dzapiinfo(event);
             
-            DebugLog(@"==== PLAYER_EVENT ==== PLAYLIST_TRACK_SELECTED for idx: %d - is_preview:%d", idx, is_preview);
+            DebugLog(@"==== PLAYER_EVENT ==== QUEUELIST_TRACK_SELECTED for idx: %d - is_preview:%d", idx, is_preview);
             DebugLog(@"\tcan_pause_unpause:%d can_seek:%d nb_skip_allowed:%d", can_pause_unpause, can_seek, nb_skip_allowed);
             if (selected_dzapiinfo)
                 DebugLog(@"\tnow:%s", selected_dzapiinfo);
@@ -570,7 +570,6 @@ void libdeezer_offline_sync_state_cb(void* supervisor,
                                                           dzr_request,
                                                           json_parser_singleton(),
                                                           libdeezer_API_request_result_cb,
-
                                                           (__bridge void *)(self));
     // Now we can release the request
     DZ_OBJECT_RELEASE(dzr_request);
