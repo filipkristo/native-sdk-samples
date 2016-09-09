@@ -1,8 +1,12 @@
 #!/usr/bin/python
 
-from ctypes import *
+from connection import *
 
 libdeezer = cdll.LoadLibrary("libdeezer.so")
+
+dz_on_event_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
+void_func = CFUNCTYPE(None, c_void_p)
 
 
 class Player:
@@ -42,69 +46,6 @@ class Player:
                                     command, mode, index):
             pass  # TODO: Error
 
-    # TODO: Type of arguments ?
-    def player_on_event_callback(self):
-        def sub(handle, event, delegate):
-            print "Coucou"
-            events_codes = [
-                'UNKNOWN',
-                'LIMITATION_FORCED_PAUSE',
-                'PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE',
-                'PLAYLIST_TRACK_NO_RIGHT',
-                'PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS',
-                'PLAYLIST_SKIP_NO_RIGHT',
-                'PLAYLIST_TRACK_SELECTED',
-                'PLAYLIST_NEED_NATURAL_NEXT',
-                'MEDIASTREAM_DATA_READY',
-                'MEDIASTREAM_DATA_READY_AFTER_SEEK',
-                'RENDER_TRACK_START_FAILURE',
-                'RENDER_TRACK_START',
-                'RENDER_TRACK_END',
-                'RENDER_TRACK_PAUSED',
-                'RENDER_TRACK_SEEKING',
-                'RENDER_TRACK_UNDERFLOW',
-                'RENDER_TRACK_RESUMED',
-                'RENDER_TRACK_REMOVED'
-            ]
-            streaming_mode = c_int()
-            idx = c_int()
-            event_type = libdeezer.dz_player_event_get_type(c_void_p(event))
-            if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
-                streaming_mode = "FIXME"  # TODO: Add streaming_mode enum
-                idx = -1
-            if events_codes[int(event_type)] == 'PLAYLIST_TRACK_SELECTED':
-                can_pause_unpause = c_bool()
-                can_seek = c_bool()
-                no_skip_allowed = c_int()
-                next_dz_api_info = c_char_p()
-                is_preview = libdeezer.dz_player_event_track_selected_is_preview(c_void_p(event))
-                libdeezer.dz_player_event_track_selected_rights(
-                    c_void_p(event),
-                    byref(can_pause_unpause),
-                    byref(can_seek),
-                    byref(no_skip_allowed)
-                )
-                selected_dz_api_info = libdeezer.dz_player_event_track_selected_dzapiinfo(c_void_p(event))
-                next_dz_api_info = libdeezer.dz_player_event_track_selected_next_track_dzapiinfo(c_void_p(event))
-                log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
-                    is_preview.value))
-                log("\tcan_pause_unpause:"+str(can_pause_unpause)+"can_seek")  # TODO: fix log as printf
-                if selected_dz_api_info.value:
-                    log("FIXME")
-                if next_dz_api_info.value:
-                    log("FIXME")
-                self.nb_tracks_played += 1
-                return 0
-            log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value))
-            if events_codes[int(event_type)] == 'RENDER_TRACK_END':  # TODO: start new track by setting current track ?
-                log("FIXME")
-                if self.nb_tracks_played != -1 and self.nb_tracks_to_play == self.nb_tracks_played:
-                    self.shutdown()
-                else:
-                    self.launch_play()
-            return 0
-        return sub
-
     def shutdown(self):
         log("FIXME")
         if self.dz_player:
@@ -115,7 +56,4 @@ class Player:
     def launch_play(self):
         self.load()
         self.play()
-
-    def log(self, message):
-        print message
 
