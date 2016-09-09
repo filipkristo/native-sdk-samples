@@ -43,6 +43,7 @@ class Connection:
         self.anonymous_blob = anonymous_blob
         self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate
         self.connect_handle = 0
+        self.active = False
         self._init_handle()
 
     def _init_handle(self):
@@ -73,6 +74,7 @@ class Connection:
         error = libdeezer.dz_connect_activate(self.connect_handle, user_data)
         if error:
             pass  # TODO: Error
+        self.active = True
 
     # TODO: handle last two args c cast
     def cache_path_set(self, user_cache_path, activity_operation_cb=None, operation_userdata=None):
@@ -90,16 +92,22 @@ class Connection:
                                              operation_userdata, c_bool(offline_mode_forced)):
             pass  # TODO: Error
 
+    def shutdown(self):
+        if self.connect_handle:
+            libdeezer.dz_connect_deactivate(self.connect_handle, c_void_p(0), None)
+            self.active = False
+
 
 class Player:
-    def __init__(self, connect_handle):
-        self.connect_handle = connect_handle
+    def __init__(self, connection):
+        self.connection = connection
         self.dz_player = 0
         self._dz_player_init()
         self.current_track = "dzmedia:///track/3135556"
+        self.active = False
 
     def _dz_player_init(self):
-        self.dz_player = libdeezer.dz_player_new(self.connect_handle)
+        self.dz_player = libdeezer.dz_player_new(self.connection.connect_handle)
         if not self.dz_player:
             pass  # TODO: Error
 
@@ -107,6 +115,7 @@ class Player:
     def activate(self, supervisor=None):
         if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
             pass  # TODO: Error
+        self.active = True
 
     def set_event_cb(self, cb):
         if libdeezer.dz_player_set_event_cb(self.dz_player, dz_on_event_cb_func(cb)):
@@ -189,18 +198,12 @@ class Player:
         log("FIXME")
         if self.dz_player:
             libdeezer.dz_player_deactivate(self.dz_player, c_void_p(0), None)
-        if self.connect_handle:
-            libdeezer.dz_connect_deactivate(self.connect_handle, c_void_p(0), None)
+            self.active = False
+        self.connection.shutdown()
 
-    # TODO: att a track as argument ?
     def launch_play(self):
         self.load()
         self.play()
-
-
-def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
-    print "I am the player event callback"
-    return 1
 
 
 def main():
@@ -224,15 +227,17 @@ def main():
     # connection.debug_log_disable()
     connection.activate()
     connection.cache_path_set(user_cache_path)
-    player = Player(connection.connect_handle)
+    player = Player(connection)
     player.activate()
     player.set_event_cb(player.player_on_event_callback)
     connection.set_access_token(user_access_token)
     connection.connect_offline_mode()
+    """
     time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
     player.load("dzmedia:///track/3135556")
     player.play()
-    while 1:
+    """
+    while connection.active and player.active:
         time.sleep(0.001)
     return 0
 
