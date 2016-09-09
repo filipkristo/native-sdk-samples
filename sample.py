@@ -3,11 +3,12 @@
 from ctypes import *
 import time
 
-dz_onevent_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+dz_on_event_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
 dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
 void_func = CFUNCTYPE(None, c_void_p)
-activation_count = 0
 libdeezer = cdll.LoadLibrary("libdeezer.so")
+nb_track_played = 0  # TODO: get rid of globals
+nb_track_to_play = 1
 
 
 class DZConnectConfiguration(Structure):
@@ -17,7 +18,7 @@ class DZConnectConfiguration(Structure):
         ("product_id", c_char_p),
         ("product_build_id", c_char_p),
         ("user_profile_path", c_char_p),
-        ("dz_connect_onevent_cb", c_void_p),
+        ("dz_connect_on_event_cb", c_void_p),
         ("anonymous_blob", c_void_p),
         ("dz_connect_crash_reporting_delegate", c_void_p)
     ]
@@ -30,7 +31,7 @@ class Connection:
                  product_id="",
                  product_build_id="",
                  user_profile_path="/var/tmp/dzrcache_NDK_SAMPLE",
-                 dz_connect_onevent_cb=None,
+                 dz_connect_on_event_cb=None,
                  anonymous_blob=None,
                  dz_connect_crash_reporting_delegate=None
                  ):
@@ -38,7 +39,7 @@ class Connection:
         self.product_id = product_id
         self.product_build_id = product_build_id
         self.user_profile_path = user_profile_path
-        self.dz_connect_onevent_cb = dz_connect_onevent_cb
+        self.dz_connect_on_event_cb = dz_connect_on_event_cb
         self.anonymous_blob = anonymous_blob
         self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate
         self.connect_handle = 0
@@ -52,7 +53,7 @@ class Connection:
             c_char_p(self.product_id),
             c_char_p(self.product_build_id),
             c_char_p(self.user_profile_path),
-            c_void_p(self.dz_connect_onevent_cb),
+            c_void_p(self.dz_connect_on_event_cb),
             c_void_p(self.anonymous_blob),
             c_void_p(self.dz_connect_crash_reporting_delegate)
         )
@@ -107,7 +108,7 @@ class Player:
             pass  # TODO: Error
 
     def set_event_cb(self, cb):
-        if libdeezer.dz_player_set_event_cb(self.dz_player, dz_onevent_cb_func(cb)):
+        if libdeezer.dz_player_set_event_cb(self.dz_player, dz_on_event_cb_func(cb)):
             pass  # TODO: Error
 
     def load(self, tracklist_data, activity_operation_cb=None, operation_user_data=None):
@@ -120,6 +121,71 @@ class Player:
                                     command, mode, index):
             pass  # TODO: Error
 
+    # TODO: Type of arguments ?
+    def player_on_event_callback(self, handle, event, delegate):
+        global nb_track_played
+        events_codes = [
+            'UNKNOWN',
+            'LIMITATION_FORCED_PAUSE',
+            'PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE',
+            'PLAYLIST_TRACK_NO_RIGHT',
+            'PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS',
+            'PLAYLIST_SKIP_NO_RIGHT',
+            'PLAYLIST_TRACK_SELECTED',
+            'PLAYLIST_NEED_NATURAL_NEXT',
+            'MEDIASTREAM_DATA_READY',
+            'MEDIASTREAM_DATA_READY_AFTER_SEEK',
+            'RENDER_TRACK_START_FAILURE',
+            'RENDER_TRACK_START',
+            'RENDER_TRACK_END',
+            'RENDER_TRACK_PAUSED',
+            'RENDER_TRACK_SEEKING',
+            'RENDER_TRACK_UNDERFLOW',
+            'RENDER_TRACK_RESUMED',
+            'RENDER_TRACK_REMOVED'
+        ]
+        streaming_mode = c_int()
+        idx = c_int()
+        type = libdeezer.dz_player_event_get_type(c_void_p(event))
+        if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
+            streaming_mode = "FIXME"  # TODO: Add streaming_mode enum
+            idx = -1
+        if events_codes[int(type)] == 'PLAYLIST_TRACK_SELECTED':
+            can_pause_unpause = c_bool()
+            can_seek = c_bool()
+            no_skip_allowed = c_int()
+            next_dz_api_info = c_char_p()
+            is_preview = libdeezer.dz_player_event_track_selected_is_preview(c_void_p(event))
+            libdeezer.dz_player_event_track_selected_rights(
+                c_void_p(event),
+                byref(can_pause_unpause),
+                byref(can_seek),
+                byref(no_skip_allowed)
+            )
+            selected_dz_api_info = libdeezer.dz_player_event_track_selected_dzapiinfo(c_void_p(event))
+            next_dz_api_info = libdeezer.dz_player_event_track_selected_next_track_dzapiinfo(c_void_p(event))
+            log("==== PLAYER_EVENT ==== "+events_codes[int(type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
+                is_preview.value))
+            log("\tcan_pause_unpause:"+str(can_pause_unpause)+"can_seek")  # TODO: fix log as printf
+            if selected_dz_api_info.value:
+                log("FIXME")
+            if next_dz_api_info.value:
+                log("FIXME")
+            nb_track_played += 1
+            return 0
+        log("==== PLAYER_EVENT ==== "+events_codes[int(type)]+" for idx: "+str(idx.value))
+        if events_codes[int(type)] == 'RENDER_TRACK_END':
+            log("FIXME")
+            if nb_track_played != -1 and nb_track_to_play == nb_track_played:
+                self.shutdown()
+            else:
+                self.launch_play()
+        return 0
+
+    def shutdown(self):
+        log("FIXME")
+        libdeezer.dz_player_deactivate(self.dz_player, )
+
 
 def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
     print "I am the player event callback"
@@ -127,9 +193,8 @@ def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
 
 
 def main():
-    global activation_count
     # Identifiers
-    user_access_token = "frqsykQXDPpOXbcq1u9B3PQ2q8DwM1JbjqfSFExSgsfgaY7ZuQj"  # SET your user access token
+    user_access_token = "frUQyHM7UjLP2lzMUR7gJjF20YUPNMQ47LeSqp3zsLRue2VKEs9"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -145,20 +210,24 @@ def main():
         0
     )
     print "Device ID:", connection.get_device_id()
-    connection.debug_log_disable()
+    # connection.debug_log_disable()
     connection.activate()
     connection.cache_path_set(user_cache_path)
-    player = Player(connection.connect_handle)  # TODO: Getter ?
+    player = Player(connection.connect_handle)
     player.activate()
-    player.set_event_cb(player_event_cb)
+    player.set_event_cb(player.player_on_event_callback)
     connection.set_access_token(user_access_token)
     connection.connect_offline_mode()
-    time.sleep(2)  # wait for login (ugly)
+    time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
     player.load("dzmedia:///track/3135556")
     player.play()
     while 1:
         time.sleep(0.001)
     return 0
+
+
+def log(message):
+    print message
 
 
 if __name__ == "__main__":
