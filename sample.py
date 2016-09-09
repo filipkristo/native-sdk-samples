@@ -96,6 +96,7 @@ class Player:
         self.connect_handle = connect_handle
         self.dz_player = 0
         self._dz_player_init()
+        self.current_track = "dzmedia:///track/3135556"
 
     def _dz_player_init(self):
         self.dz_player = libdeezer.dz_player_new(self.connect_handle)
@@ -111,9 +112,11 @@ class Player:
         if libdeezer.dz_player_set_event_cb(self.dz_player, dz_on_event_cb_func(cb)):
             pass  # TODO: Error
 
-    def load(self, tracklist_data, activity_operation_cb=None, operation_user_data=None):
+    def load(self, tracklist_data=None, activity_operation_cb=None, operation_user_data=None):
+        if tracklist_data:
+            self.current_track = tracklist_data
         if libdeezer.dz_player_load(self.dz_player, activity_operation_cb, operation_user_data,
-                                    tracklist_data):
+                                    self.current_track):
             pass  # TODO: Error
 
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
@@ -174,7 +177,7 @@ class Player:
             nb_track_played += 1
             return 0
         log("==== PLAYER_EVENT ==== "+events_codes[int(type)]+" for idx: "+str(idx.value))
-        if events_codes[int(type)] == 'RENDER_TRACK_END':
+        if events_codes[int(type)] == 'RENDER_TRACK_END':  # TODO: start new track by setting current track ?
             log("FIXME")
             if nb_track_played != -1 and nb_track_to_play == nb_track_played:
                 self.shutdown()
@@ -184,7 +187,15 @@ class Player:
 
     def shutdown(self):
         log("FIXME")
-        libdeezer.dz_player_deactivate(self.dz_player, )
+        if self.dz_player:
+            libdeezer.dz_player_deactivate(self.dz_player, c_void_p(0), None)
+        if self.connect_handle:
+            libdeezer.dz_connect_deactivate(self.connect_handle, c_void_p(0), None)
+
+    # TODO: att a track as argument ?
+    def launch_play(self):
+        self.load()
+        self.play()
 
 
 def player_event_cb(dz_connect_handle, dz_connect_event_handle, delegate):
