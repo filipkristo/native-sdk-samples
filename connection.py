@@ -22,7 +22,7 @@ class ConnectionInitFailedError(Exception):
         return repr(self.value)
 
 
-class RequestFailedError(Exception):
+class ConnectionRequestFailedError(Exception):
 
     def __init__(self, value):
         self.value = value
@@ -66,7 +66,7 @@ class Connection:
 
     def debug_log_disable(self):
         if libdeezer.dz_connect_debug_log_disable(self.connect_handle):
-            raise RequestFailedError('debug_log_disable: Request failed.')
+            raise ConnectionRequestFailedError('debug_log_disable: Request failed.')
 
     def activate(self, user_data = None):
         if libdeezer.dz_connect_activate(self.connect_handle, user_data):
@@ -75,15 +75,15 @@ class Connection:
 
     def cache_path_set(self, user_cache_path, activity_operation_cb = None, operation_userdata = None):
         if libdeezer.dz_connect_cache_path_set(self.connect_handle, activity_operation_cb, operation_userdata, c_char_p(user_cache_path)):
-            raise RequestFailedError('cache_path_set: Request failed. Check connection and path validity.')
+            raise ConnectionRequestFailedError('cache_path_set: Request failed. Check connection and path validity.')
 
     def set_access_token(self, user_access_token, activity_operation_cb = None, operation_user_data = None):
         if libdeezer.dz_connect_set_access_token(self.connect_handle, activity_operation_cb, operation_user_data, c_char_p(user_access_token)):
-            raise RequestFailedError('set_access_token: Request failed. Check access token or update it.')
+            raise ConnectionRequestFailedError('set_access_token: Request failed. Check access token or update it.')
 
     def connect_offline_mode(self, activity_operation_cb = None, operation_userdata = None, offline_mode_forced = False):
         if libdeezer.dz_connect_offline_mode(self.connect_handle, activity_operation_cb, operation_userdata, c_bool(offline_mode_forced)):
-            raise RequestFailedError('connect_offline_mode: Request failed. Check connection and callbacks if used.')
+            raise ConnectionRequestFailedError('connect_offline_mode: Request failed. Check connection and callbacks if used.')
 
     def shutdown(self):
         if self.connect_handle:
