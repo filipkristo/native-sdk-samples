@@ -22,7 +22,7 @@ def main():
     app.initialize_connection(user_access_token, True)
 
     # TODO: Type of arguments ?
-    def callback(handle, event, delegate):
+    def playerEventCallback(handle, event, delegate):
         events_codes = [
             'UNKNOWN',
             'LIMITATION_FORCED_PAUSE',
@@ -68,21 +68,24 @@ def main():
             app.log("\tcan_pause_unpause: {0} - can_seek: {1}"
                     .format(str(can_pause_unpause.value), str(can_seek.value)))
             if selected_dz_api_info:
-                app.log("FIXME")
+                app.log("\tnow:{0}".format(selected_dz_api_info))
             if next_dz_api_info:
-                app.log("FIXME")
+                app.log("\tnext:{0}".format(next_dz_api_info))
             app.player.nb_tracks_played += 1
             return 0
         app.log("==== PLAYER_EVENT ==== {0} for idx: {1}".format(events_codes[int(event_type)], str(idx.value)))
         if events_codes[int(event_type)] == 'RENDER_TRACK_END':  # TODO: start new track by setting current track ?
-            app.log("FIXME")
+            app.log("\tnb_track_to_play: {0}\tnb_track_played: {1}"
+                    .format(app.player.nb_tracks_to_play, app.player.nb_tracks_played))
             if app.player.nb_tracks_played != -1 and app.player.nb_tracks_to_play == app.player.nb_tracks_played:
                 app.player.shutdown()
             else:
                 app.player.launch_play()
+        if events_codes[int(event_type)] == 'PLAYLIST_NEED_NATURAL_NEXT':
+            app.player.launch_play()
         return 0
 
-    app.launch_player(callback, "dzmedia:///track/85509044")
+    app.launch_player(playerEventCallback, "dzmedia:///track/85509044")
     time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
     app.player.load("dzmedia:///track/85509044")
     app.player.play()
