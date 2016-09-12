@@ -82,7 +82,7 @@ class Connection:
 
     def cache_path_set(self, user_cache_path, activity_operation_cb = None, operation_userdata = None):
         if libdeezer.dz_connect_cache_path_set(self.connect_handle, activity_operation_cb, operation_userdata, c_char_p(user_cache_path)):
-            raise ConnectionRequestFailedError('cache_path_set: Request failed. Check connection and path validity.')
+            raise ConnectionRequestFailedError('cache_path_set: Request failed. Check connection and/or path validity.')
 
     def set_access_token(self, user_access_token, activity_operation_cb = None, operation_user_data = None):
         if libdeezer.dz_connect_set_access_token(self.connect_handle, activity_operation_cb, operation_user_data, c_char_p(user_access_token)):

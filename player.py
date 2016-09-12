@@ -76,7 +76,6 @@ class Player:
             raise PlayerRequestFailedError("play: Unable to play selected track. Check player commands and info.")
 
     def shutdown(self):
-        # log("FIXME")
         if self.dz_player:
             libdeezer.dz_player_deactivate(self.dz_player, c_void_p(0), None)
             self.active = False
@@ -85,4 +84,5 @@ class Player:
     def launch_play(self):
         self.load()
         self.play()
+
 

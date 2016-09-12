@@ -6,7 +6,7 @@ from myDeezerApp import *
 
 def main():
     # Identifiers
-    user_access_token = "frjBTxvKeNLpG0DgYc3yOtz1hMnwgFDL46RSZLQznAHoS2asXsG"  # SET your user access token
+    user_access_token = "frd15UMU0XaHF3yuuaf8JyAmPOKERBq8xxHKpJEjpNvvqwR4idF"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -19,7 +19,7 @@ def main():
         user_cache_path,
         0, 0, 0
     )
-    app.initialize(user_access_token, True)
+    app.initialize_connection(user_access_token, True)
 
     # TODO: Type of arguments ?
     def callback(handle, event, delegate):
@@ -63,36 +63,31 @@ def main():
             )
             selected_dz_api_info = libdeezer.dz_player_event_track_selected_dzapiinfo(c_void_p(event))
             next_dz_api_info = libdeezer.dz_player_event_track_selected_next_track_dzapiinfo(c_void_p(event))
-            log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
+            app.log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
                 is_preview))
-            log("\tcan_pause_unpause: "+str(can_pause_unpause.value)+" can_seek")  # TODO: fix log as printf
+            app.log("\tcan_pause_unpause: "+str(can_pause_unpause.value)+" can_seek")  # TODO: fix log as printf
             if selected_dz_api_info:
-                log("FIXME")
+                app.log("FIXME")
             if next_dz_api_info:
-                log("FIXME")
+                app.log("FIXME")
             app.player.nb_tracks_played += 1
             return 0
-        log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value))
+        app.log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value))
         if events_codes[int(event_type)] == 'RENDER_TRACK_END':  # TODO: start new track by setting current track ?
-            log("FIXME")
+            app.log("FIXME")
             if app.player.nb_tracks_played != -1 and app.player.nb_tracks_to_play == app.player.nb_tracks_played:
                 app.player.shutdown()
             else:
                 app.player.launch_play()
         return 0
 
-    app.set_player_event_callback(callback)
-    app.launch()
+    app.launch_player(callback, "dzmedia:///track/85509044")
     time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
     app.player.load("dzmedia:///track/85509044")
     app.player.play()
     while app.connection.active and app.player.active:
-        time.sleep(0.001)
+        time.sleep(1)
     return 0
-
-
-def log(message):
-    print message
 
 
 if __name__ == "__main__":
