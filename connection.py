@@ -42,7 +42,8 @@ class ConnectionActivationError(Exception):
 
 class Connection:
 
-    def __init__(self, app_id = '', product_id = '', product_build_id = '', user_profile_path = '/var/tmp/dzrcache_NDK_SAMPLE', dz_connect_on_event_cb = None, anonymous_blob = None, dz_connect_crash_reporting_delegate = None):
+    def __init__(self, app_id='', product_id='', product_build_id='', user_profile_path='/var/tmp/dzrcache_NDK_SAMPLE',
+                 dz_connect_on_event_cb=None, anonymous_blob=None, dz_connect_crash_reporting_delegate=None):
         self.app_id = app_id
         self.product_id = product_id
         self.product_build_id = product_build_id
@@ -56,10 +57,16 @@ class Connection:
 
     def _init_handle(self):
         """Initialize connection info and return the connection handler"""
-        config = DZConnectConfiguration(c_char_p(self.app_id), c_char_p(self.product_id), c_char_p(self.product_build_id), c_char_p(self.user_profile_path), c_void_p(self.dz_connect_on_event_cb), c_void_p(self.anonymous_blob), c_void_p(self.dz_connect_crash_reporting_delegate))
+        config = DZConnectConfiguration(c_char_p(self.app_id),
+                                        c_char_p(self.product_id),
+                                        c_char_p(self.product_build_id),
+                                        c_char_p(self.user_profile_path),
+                                        c_void_p(self.dz_connect_on_event_cb),
+                                        c_void_p(self.anonymous_blob),
+                                        c_void_p(self.dz_connect_crash_reporting_delegate))
         self.connect_handle = libdeezer.dz_connect_new(byref(config))
         if not self.connect_handle:
-            raise ConnectionInitFailedError('Connection handle failed to initialize. Check connection info.')
+            raise ConnectionInitFailedError('Connection handle failed to initialize. Check connection info you gave.')
 
     def get_device_id(self):
         return libdeezer.dz_connect_get_device_id(self.connect_handle)
@@ -83,7 +90,8 @@ class Connection:
 
     def connect_offline_mode(self, activity_operation_cb = None, operation_userdata = None, offline_mode_forced = False):
         if libdeezer.dz_connect_offline_mode(self.connect_handle, activity_operation_cb, operation_userdata, c_bool(offline_mode_forced)):
-            raise ConnectionRequestFailedError('connect_offline_mode: Request failed. Check connection and callbacks if used.')
+            raise ConnectionRequestFailedError(
+                'connect_offline_mode: Request failed. Check connection and callbacks if used.')
 
     def shutdown(self):
         if self.connect_handle:

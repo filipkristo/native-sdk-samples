@@ -19,15 +19,17 @@ class MyDeezerApp(object):
         self.player = Player(self.connection)
 
     def set_player_event_callback(self, callback):
-        self.player.set_event_cb(callback)
+            self.player.set_event_cb(callback)
 
-    def initialize_connection(self, user_access_token, debug_mode=False):
+    def initialize(self, user_access_token, debug_mode=False):
         if not debug_mode:
             self.connection.debug_log_disable()
-        self.connection.activate()
         self.connection.cache_path_set(self.connection.user_profile_path)  # TODO: ask if user cache path here is sometimes different than in MDA
-        self.player.activate()
         self.connection.set_access_token(user_access_token)
-        self.connection.connect_offline_mode()
         print "Device ID:", self.connection.get_device_id()
+
+    def launch(self):
+        self.connection.activate()
+        self.connection.connect_offline_mode()  # Required
+        self.player.activate()
 

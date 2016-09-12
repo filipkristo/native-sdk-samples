@@ -4,15 +4,9 @@ import time
 from myDeezerApp import *
 
 
-
-def dummy_callback(a, b, c):
-    print "Hi, I am the dummy callback :B"
-    return 1
-
-
 def main():
     # Identifiers
-    user_access_token = "frXrUrEQ71IxCk2VnCcLRFXsXUkZT8sOC3G72cB2fwcPm6GsVtW"  # SET your user access token
+    user_access_token = "frjBTxvKeNLpG0DgYc3yOtz1hMnwgFDL46RSZLQznAHoS2asXsG"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -25,7 +19,7 @@ def main():
         user_cache_path,
         0, 0, 0
     )
-    app.initialize_connection(user_access_token, True)
+    app.initialize(user_access_token, True)
 
     # TODO: Type of arguments ?
     def callback(handle, event, delegate):
@@ -88,6 +82,7 @@ def main():
         return 0
 
     app.set_player_event_callback(callback)
+    app.launch()
     time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
     app.player.load("dzmedia:///track/85509044")
     app.player.play()
