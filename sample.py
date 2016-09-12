@@ -6,23 +6,22 @@ from myDeezerApp import *
 
 def main():
     # Identifiers
-    user_access_token = "frd15UMU0XaHF3yuuaf8JyAmPOKERBq8xxHKpJEjpNvvqwR4idF"  # SET your user access token
+    user_access_token = "frBr1NfilWAVvimAYAkHU7A7BIYFuIWuvGshlGWPzDvSmmlXcWM"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
     # TODO: WIN32 cache path
     user_cache_path = "/var/tmp/dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
-    app = MyDeezerApp (
+    app = MyDeezerApp(
         your_application_id,
         your_application_name,
         your_application_version,
         user_cache_path,
         0, 0, 0
     )
-    app.initialize_connection(user_access_token, True)
 
     # TODO: Type of arguments ?
-    def playerEventCallback(handle, event, delegate):
+    def player_event_callback(handle, event, delegate):
         events_codes = [
             'UNKNOWN',
             'LIMITATION_FORCED_PAUSE',
@@ -85,10 +84,31 @@ def main():
             app.player.launch_play()
         return 0
 
-    app.launch_player(playerEventCallback, "dzmedia:///track/85509044")
-    time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
-    app.player.load("dzmedia:///track/85509044")
-    app.player.play()
+    def connection_event_callback(handle, event, delegate):
+        event_codes = [
+            'UNKNOWN',
+            'USER_OFFLINE_AVAILABLE',
+            'USER_ACCESS_TOKEN_OK',
+            'USER_ACCESS_TOKEN_FAILED',
+            'USER_LOGIN_OK',
+            'USER_LOGIN_FAIL_NETWORK_ERROR',
+            'USER_LOGIN_FAIL_BAD_CREDENTIALS',
+            'USER_LOGIN_FAIL_USER_INFO',
+            'USER_LOGIN_FAIL_OFFLINE_MODE',
+            'USER_NEW_OPTIONS',
+            'ADVERTISEMENT_START',
+            'ADVERTISEMENT_STOP'
+        ]
+        event_type = libdeezer.dz_player_event_get_type(c_void_p(event))
+        app.log("++++ CONNECT_EVENT ++++ {0}".format(event_codes[int(event_type)]))
+        if event_codes[int(event_type)] == 'USER_LOGIN_OK':
+            app.start_player()
+        return 0
+
+    app.initialize_connection(connection_event_callback, True)
+    app.activate_connection(user_access_token)
+    app.initialize_player(player_event_callback)
+    app.activate_player("dzmedia:///track/85509044")
     while app.connection.active and app.player.active:
         time.sleep(1)
     return 0

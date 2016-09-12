@@ -1,6 +1,9 @@
 from ctypes import *
 libdeezer = cdll.LoadLibrary('libdeezer.so')
 
+dz_on_event_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
+
 
 class DZConnectConfiguration(Structure):
     _pack_ = 1
@@ -8,9 +11,9 @@ class DZConnectConfiguration(Structure):
      ('product_id', c_char_p),
      ('product_build_id', c_char_p),
      ('user_profile_path', c_char_p),
-     ('dz_connect_on_event_cb', c_void_p),
+     ('dz_connect_on_event_cb', dz_on_event_cb_func),
      ('anonymous_blob', c_void_p),
-     ('dz_connect_crash_reporting_delegate', c_void_p)]
+     ('dz_connect_crash_reporting_delegate', dz_connect_crash_reporting_delegate_func)]
 
 
 class ConnectionInitFailedError(Exception):
@@ -48,25 +51,28 @@ class Connection:
         self.product_id = product_id
         self.product_build_id = product_build_id
         self.user_profile_path = user_profile_path
-        self.dz_connect_on_event_cb = dz_connect_on_event_cb
+        self.dz_connect_on_event_cb = dz_on_event_cb_func(dz_connect_on_event_cb)
         self.anonymous_blob = anonymous_blob
-        self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate
+        self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate_func(
+            dz_connect_crash_reporting_delegate)
         self.connect_handle = 0
         self.active = False
-        self._init_handle()
 
-    def _init_handle(self):
+    def init_handle(self):
         """Initialize connection info and return the connection handler"""
         config = DZConnectConfiguration(c_char_p(self.app_id),
                                         c_char_p(self.product_id),
                                         c_char_p(self.product_build_id),
                                         c_char_p(self.user_profile_path),
-                                        c_void_p(self.dz_connect_on_event_cb),
+                                        self.dz_connect_on_event_cb,
                                         c_void_p(self.anonymous_blob),
-                                        c_void_p(self.dz_connect_crash_reporting_delegate))
+                                        self.dz_connect_crash_reporting_delegate)
         self.connect_handle = libdeezer.dz_connect_new(byref(config))
         if not self.connect_handle:
             raise ConnectionInitFailedError('Connection handle failed to initialize. Check connection info you gave.')
+
+    def set_event_callback(self, callback):
+        self.dz_connect_on_event_cb = dz_on_event_cb_func(callback)
 
     def get_device_id(self):
         return libdeezer.dz_connect_get_device_id(self.connect_handle)

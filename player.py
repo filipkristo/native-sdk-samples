@@ -4,8 +4,6 @@ from connection import *
 
 libdeezer = cdll.LoadLibrary("libdeezer.so")
 
-dz_on_event_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
-dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
 void_func = CFUNCTYPE(None, c_void_p)
 
 
