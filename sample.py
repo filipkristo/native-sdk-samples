@@ -63,16 +63,17 @@ def main():
             )
             selected_dz_api_info = libdeezer.dz_player_event_track_selected_dzapiinfo(c_void_p(event))
             next_dz_api_info = libdeezer.dz_player_event_track_selected_next_track_dzapiinfo(c_void_p(event))
-            app.log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
-                is_preview))
-            app.log("\tcan_pause_unpause: "+str(can_pause_unpause.value)+" can_seek")  # TODO: fix log as printf
+            app.log("==== PLAYER_EVENT ==== {0} for idx: {1} - is_preview: {2}"
+                    .format(events_codes[int(event_type)], str(idx.value), str(is_preview)))
+            app.log("\tcan_pause_unpause: {0} - can_seek: {1}"
+                    .format(str(can_pause_unpause.value), str(can_seek.value)))
             if selected_dz_api_info:
                 app.log("FIXME")
             if next_dz_api_info:
                 app.log("FIXME")
             app.player.nb_tracks_played += 1
             return 0
-        app.log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value))
+        app.log("==== PLAYER_EVENT ==== {0} for idx: {1}".format(events_codes[int(event_type)], str(idx.value)))
         if events_codes[int(event_type)] == 'RENDER_TRACK_END':  # TODO: start new track by setting current track ?
             app.log("FIXME")
             if app.player.nb_tracks_played != -1 and app.player.nb_tracks_to_play == app.player.nb_tracks_played:
