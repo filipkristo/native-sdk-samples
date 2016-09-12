@@ -12,7 +12,7 @@ def dummy_callback(a, b, c):
 
 def main():
     # Identifiers
-    user_access_token = "frw3mjDsQ6lgPBYDfKeGCv0j2XA3yycGurZil5r2zuuPtsXrh7s"  # SET your user access token
+    user_access_token = "frXrUrEQ71IxCk2VnCcLRFXsXUkZT8sOC3G72cB2fwcPm6GsVtW"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -70,11 +70,11 @@ def main():
             selected_dz_api_info = libdeezer.dz_player_event_track_selected_dzapiinfo(c_void_p(event))
             next_dz_api_info = libdeezer.dz_player_event_track_selected_next_track_dzapiinfo(c_void_p(event))
             log("==== PLAYER_EVENT ==== "+events_codes[int(event_type)]+" for idx: "+str(idx.value)+" - is_preview: "+str(
-                is_preview.value))
-            log("\tcan_pause_unpause:"+str(can_pause_unpause)+"can_seek")  # TODO: fix log as printf
-            if selected_dz_api_info.value:
+                is_preview))
+            log("\tcan_pause_unpause: "+str(can_pause_unpause.value)+" can_seek")  # TODO: fix log as printf
+            if selected_dz_api_info:
                 log("FIXME")
-            if next_dz_api_info.value:
+            if next_dz_api_info:
                 log("FIXME")
             app.player.nb_tracks_played += 1
             return 0
@@ -89,7 +89,7 @@ def main():
 
     app.set_player_event_callback(callback)
     time.sleep(2)  # wait for login (ugly) TODO: Add an event listener
-    app.player.load("dzmedia:///track/3135556")
+    app.player.load("dzmedia:///track/85509044")
     app.player.play()
     while app.connection.active and app.player.active:
         time.sleep(0.001)

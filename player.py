@@ -47,7 +47,7 @@ class Player:
             pass  # TODO: Error
 
     def shutdown(self):
-        log("FIXME")
+        # log("FIXME")
         if self.dz_player:
             libdeezer.dz_player_deactivate(self.dz_player, c_void_p(0), None)
             self.active = False
