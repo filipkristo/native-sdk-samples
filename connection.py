@@ -43,6 +43,26 @@ class ConnectionActivationError(Exception):
         return repr(self.value)
 
 
+class ConnectionEvent:
+    def __init__(self):
+        pass
+
+    (
+        UNKNOWN,
+        USER_OFFLINE_AVAILABLE,
+        USER_ACCESS_TOKEN_OK,
+        USER_ACCESS_TOKEN_FAILED,
+        USER_LOGIN_OK,
+        USER_LOGIN_FAIL_NETWORK_ERROR,
+        USER_LOGIN_FAIL_BAD_CREDENTIALS,
+        USER_LOGIN_FAIL_USER_INFO,
+        USER_LOGIN_FAIL_OFFLINE_MODE,
+        USER_NEW_OPTIONS,
+        ADVERTISEMENT_START,
+        ADVERTISEMENT_STOP
+    ) = range(0, 12)
+
+
 class Connection:
 
     def __init__(self, app_id='', product_id='', product_build_id='', user_profile_path='/var/tmp/dzrcache_NDK_SAMPLE',

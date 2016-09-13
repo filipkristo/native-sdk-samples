@@ -34,6 +34,32 @@ class PlayerActivationError(Exception):
         return repr(self.value)
 
 
+class PlayerEvent:
+    def __init__(self):
+        pass
+
+    (
+        UNKNOWN,
+        LIMITATION_FORCED_PAUSE,
+        PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE,
+        PLAYLIST_TRACK_NO_RIGHT,
+        PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS,
+        PLAYLIST_SKIP_NO_RIGHT,
+        PLAYLIST_TRACK_SELECTED,
+        PLAYLIST_NEED_NATURAL_NEXT,
+        MEDIASTREAM_DATA_READY,
+        MEDIASTREAM_DATA_READY_AFTER_SEEK,
+        RENDER_TRACK_START_FAILURE,
+        RENDER_TRACK_START,
+        RENDER_TRACK_END,
+        RENDER_TRACK_PAUSED,
+        RENDER_TRACK_SEEKING,
+        RENDER_TRACK_UNDERFLOW,
+        RENDER_TRACK_RESUMED,
+        RENDER_TRACK_REMOVED
+    ) = range(0, 18)
+
+
 class Player:
     def __init__(self, connection):
         self.connection = connection
