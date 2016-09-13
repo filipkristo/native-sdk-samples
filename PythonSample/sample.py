@@ -7,7 +7,7 @@ from myDeezerApp import *
 
 def main():
     # Identifiers
-    user_access_token = "frPFVLJ4QwRKtTe2e98jfLp0QYYx9d3ycZhQ2BpDmukn6E6TpoE"  # SET your user access token
+    user_access_token = "fre2J5D7Q2hPDQUUI8bOywdG99UJxfhJyMemuKgYvrKgAmIN2Il"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -23,6 +23,7 @@ def main():
         0, 0, 0
     )
 
+    # We set the callback for player events, to print various logs and listen to events
     def player_event_callback(handle, event, delegate):
         event_names = [
             'UNKNOWN',
@@ -50,6 +51,7 @@ def main():
         if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
             streaming_mode = StreamingMode.ON_DEMAND
             idx = -1
+        # Print track info after the track is loaded and selected
         if event_type == PlayerEvent.PLAYLIST_TRACK_SELECTED:
             can_pause_unpause = c_bool()
             can_seek = c_bool()
@@ -74,6 +76,7 @@ def main():
             app.player.nb_tracks_played += 1
             return 0
         app.log("==== PLAYER_EVENT ==== {0} for idx: {1}".format(event_names[event_type], idx.value))
+        # Will stop execution after the track is finished
         if event_type == PlayerEvent.RENDER_TRACK_END:
             app.log("\tnb_track_to_play: {0}\tnb_track_played: {1}"
                     .format(app.player.nb_tracks_to_play, app.player.nb_tracks_played))
@@ -85,6 +88,7 @@ def main():
             app.player.launch_play()
         return 0
 
+    # We set the connection callback to launch the player after connection is established
     def connection_event_callback(handle, event, delegate):
         event_names = [
             'UNKNOWN',
@@ -102,6 +106,7 @@ def main():
         ]
         event_type = int(libdeezer.dz_player_event_get_type(c_void_p(event)))
         app.log("++++ CONNECT_EVENT ++++ {0}".format(event_names[event_type]))
+        # After User is authenticated we can start the player
         if event_type == ConnectionEvent.USER_LOGIN_OK:
             app.start_player()
         return 0
@@ -110,7 +115,7 @@ def main():
     app.activate_connection(user_access_token)
     app.initialize_player(player_event_callback)
     app.activate_player("dzmedia:///track/85509044")
-    while app.connection.active and app.player.active:
+    while app.connection.active and app.player.active:  # Wait for end of play
         time.sleep(1)
     return 0
 
