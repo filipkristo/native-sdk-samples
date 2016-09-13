@@ -32,6 +32,10 @@ class PlayerActivationError(Exception):
 
 
 class PlayerEvent:
+    """
+        Defines values associated to player events.
+        Use it for your callbacks.
+    """
     def __init__(self):
         pass
 
@@ -58,10 +62,23 @@ class PlayerEvent:
 
 
 class Player:
+    """A simple player load and play music.
+
+        Attributes:
+            connection          A connection object to store connection info
+            dz_player           The ID of the player
+            current_track       The track currently played
+            active              True if the player has been activated
+            nb_tracks_played    The number of tracks played
+            nb_tracks_to_play   The number of tracks to play in total
+    """
     def __init__(self, connection):
+        """
+        :param connection: A connection object to store connection info
+        :type connection: connection.Connection
+        """
         self.connection = connection
         self.dz_player = 0
-        self._dz_player_init()
         self.current_track = "dzmedia:///track/3135556"
         self.active = False
         self.nb_tracks_played = 0
@@ -69,38 +86,85 @@ class Player:
         self._dz_player_init()
 
     def _dz_player_init(self):
+        """
+            Initialize the player ID, mandatory before activation.
+        """
         self.dz_player = libdeezer.dz_player_new(self.connection.connect_handle)
         if not self.dz_player:
             raise PlayerInitFailedError("Player failed to init. Check that connection is established.")
 
     def activate(self, supervisor=None):
+        """ Activate the player.
+
+        :param supervisor: An application context that will be returned
+            when event occurs.
+        """
         if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
             raise PlayerActivationError("Player activation failed. Check player info and your network connection.")
         self.active = True
 
     def set_event_cb(self, cb):
+        """
+        Set the callback that will be triggered anytime the player state changes.
+
+        :param cb: The event callback to give.
+        """
         if libdeezer.dz_player_set_event_cb(self.dz_player, dz_on_event_cb_func(cb)):
             raise PlayerRequestFailedError(
                 "set_event_cb: Request failed. Check the given callback arguments and return types and/or the player.")
 
+    # TODO: Find user_data use
     def load(self, tracklist_data=None, activity_operation_cb=None, operation_user_data=None):
+        """Load the given track or the current track. On first case,
+            set the current_track to the given track.
+        :param tracklist_data: The track/tracklist to load
+        :type tracklist_data: str
+        :param activity_operation_cb: A callback triggered after operation
+        :param operation_user_data:  A reference to user's data
+        :return:
+        """
         if tracklist_data:
             self.current_track = tracklist_data
         if libdeezer.dz_player_load(self.dz_player, activity_operation_cb, operation_user_data,
                                     self.current_track):
             raise PlayerRequestFailedError("load: Unable to load selected track. Check connection and tracklist data.")
 
+    # TODO: Create mode and command enums. See user data and cb use/type
+    # TODO: Search for command parameter
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
+        """Play the current track if loaded.
+            The player gets data and renders it.
+
+            The player can be used in several ways:
+                Albums and Playlists: SDK does not currently support playing
+                    albums and playlists directly. Instead you need to play
+                    them track by track.
+                    To do so, use AUTOPLAY_MODE as mode and pass_in the track
+                    ids.
+                Radios: To play a radio, use AUTOPLAY_MODE_NEXT to launch next
+                    tracks automatically.
+        :param command: Player command
+        :param mode: Autoplay mode
+        :param index: Index of the track to play
+        :param activity_operation_cb: Called when async result is available
+        :param operation_user_data: A reference to user's data
+        """
         if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
                                     command, mode, index) not in range(0, 2):
             raise PlayerRequestFailedError("play: Unable to play selected track. Check player commands and info.")
 
     def shutdown(self):
+        """
+        Deactivate the player and close the connection.
+        """
         if self.dz_player:
             libdeezer.dz_player_deactivate(self.dz_player, c_void_p(0), None)
             self.active = False
         self.connection.shutdown()
 
     def launch_play(self):
+        """
+        Load and play the current track.
+        """
         self.load()
         self.play()
