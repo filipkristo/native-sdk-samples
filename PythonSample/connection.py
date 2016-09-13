@@ -149,7 +149,7 @@ class Connection:
             raise ConnectionInitFailedError('Connection handle failed to initialize. Check connection info you gave.')
 
     # TODO: give the exact type of the callback
-    def set_event_callback(self, callback):
+    def set_event_cb(self, callback):
         """
         Set the callback that will be triggered anytime connection state changes.
 
@@ -240,3 +240,4 @@ class Connection:
         if self.connect_handle:
             libdeezer.dz_connect_deactivate(self.connect_handle, c_void_p(0), None)
             self.active = False
+
