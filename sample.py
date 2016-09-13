@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import time
+import platform
 from myDeezerApp import *
 
 
@@ -10,8 +11,10 @@ def main():
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
-    # TODO: WIN32 cache path
-    user_cache_path = "/var/tmp/dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
+    if platform.system() == 'Windows':
+        user_cache_path = "c:\\dzr\\dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
+    else:
+        user_cache_path = "/var/tmp/dzrcache_NDK_SAMPLE"  # SET the user cache path, the path must exist
     app = MyDeezerApp(
         your_application_id,
         your_application_name,
@@ -20,7 +23,6 @@ def main():
         0, 0, 0
     )
 
-    # TODO: Type of arguments ?
     def player_event_callback(handle, event, delegate):
         event_names = [
             'UNKNOWN',
@@ -46,13 +48,12 @@ def main():
         idx = c_int()
         event_type = int(libdeezer.dz_player_event_get_type(c_void_p(event)))
         if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
-            streaming_mode = "FIXME"  # TODO: Add streaming_mode enum
+            streaming_mode = StreamingMode.ON_DEMAND
             idx = -1
         if event_type == PlayerEvent.PLAYLIST_TRACK_SELECTED:
             can_pause_unpause = c_bool()
             can_seek = c_bool()
             no_skip_allowed = c_int()
-            next_dz_api_info = c_char_p()
             is_preview = libdeezer.dz_player_event_track_selected_is_preview(c_void_p(event))
             libdeezer.dz_player_event_track_selected_rights(
                 c_void_p(event),
@@ -73,7 +74,7 @@ def main():
             app.player.nb_tracks_played += 1
             return 0
         app.log("==== PLAYER_EVENT ==== {0} for idx: {1}".format(event_names[event_type], idx.value))
-        if event_type == PlayerEvent.RENDER_TRACK_END:  # TODO: start new track by setting current track ?
+        if event_type == PlayerEvent.RENDER_TRACK_END:
             app.log("\tnb_track_to_play: {0}\tnb_track_played: {1}"
                     .format(app.player.nb_tracks_to_play, app.player.nb_tracks_played))
             if app.player.nb_tracks_played != -1 and app.player.nb_tracks_to_play == app.player.nb_tracks_played:

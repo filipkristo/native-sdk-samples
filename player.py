@@ -8,7 +8,6 @@ void_func = CFUNCTYPE(None, c_void_p)
 
 
 class PlayerInitFailedError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -17,7 +16,6 @@ class PlayerInitFailedError(Exception):
 
 
 class PlayerRequestFailedError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -26,7 +24,6 @@ class PlayerRequestFailedError(Exception):
 
 
 class PlayerActivationError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -76,7 +73,6 @@ class Player:
         if not self.dz_player:
             raise PlayerInitFailedError("Player failed to init. Check that connection is established.")
 
-    # TODO: handle supervisor argument type
     def activate(self, supervisor=None):
         if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
             raise PlayerActivationError("Player activation failed. Check player info and your network connection.")
@@ -96,7 +92,7 @@ class Player:
 
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
         if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
-                                        command, mode, index) not in range(0, 2):
+                                    command, mode, index) not in range(0, 2):
             raise PlayerRequestFailedError("play: Unable to play selected track. Check player commands and info.")
 
     def shutdown(self):
@@ -108,5 +104,3 @@ class Player:
     def launch_play(self):
         self.load()
         self.play()
-
-

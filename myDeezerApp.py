@@ -29,7 +29,7 @@ class MyDeezerApp(object):
 
     def activate_connection(self, user_access_token):
         self.connection.activate()
-        self.connection.cache_path_set(self.connection.user_profile_path)  # TODO: ask if user cache path here is sometimes different than in MDA
+        self.connection.cache_path_set(self.connection.user_profile_path)
         self.connection.set_access_token(user_access_token)
         self.connection.connect_offline_mode()  # Required
 
