@@ -7,7 +7,7 @@ from myDeezerApp import *
 
 def main():
     # Identifiers
-    user_access_token = "fre2J5D7Q2hPDQUUI8bOywdG99UJxfhJyMemuKgYvrKgAmIN2Il"  # SET your user access token
+    user_access_token = "frBhmeUmcYlXEIR7CjiuHmPnEBey7FUjC3VyWzNDgkAYxPoqD0E"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -47,7 +47,8 @@ def main():
         ]
         streaming_mode = c_int()
         idx = c_int()
-        event_type = int(libdeezer.dz_player_event_get_type(c_void_p(event)))
+        event_type = Connection.get_event(event)
+        # TODO: wrap libdeezer calls in Connection/Player classes
         if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
             streaming_mode = StreamingMode.ON_DEMAND
             idx = -1
@@ -104,7 +105,7 @@ def main():
             'ADVERTISEMENT_START',
             'ADVERTISEMENT_STOP'
         ]
-        event_type = int(libdeezer.dz_player_event_get_type(c_void_p(event)))
+        event_type = Connection.get_event(event)
         app.log("++++ CONNECT_EVENT ++++ {0}".format(event_names[event_type]))
         # After User is authenticated we can start the player
         if event_type == ConnectionEvent.USER_LOGIN_OK:
