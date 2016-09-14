@@ -24,6 +24,7 @@ def main():
     )
 
     # We set the callback for player events, to print various logs and listen to events
+    # TODO: use player's get_event function, not connection's
     def player_event_callback(handle, event, delegate):
         event_names = [
             'UNKNOWN',

@@ -1,10 +1,42 @@
 #!/usr/bin/python
 
+"""
+    Deezer ``player`` module for NativeSDK
+    ==========================================
+
+    Manage music, load and play songs, reports player events.
+
+    This is a part of the Python wrapper for the NativeSDK. This module wraps
+    the deezer-player functions into several python classes. The calls to the
+    C lib are done using ctypes.
+
+    Content summary
+    ---------------
+
+    The class used to manage the player is the Player class. The others
+    describe C enums to be used in callbacks (see below) and logs as
+    events (like the PlayerEvent class).
+
+    Callback types
+    --------------
+
+    A bunch of this module's functions use callbacks to react to some
+    connection events or to process some data. you are free to pass your funcs
+    as callbacks, they are then translated to C functions and passed to the SDK
+    functions:
+
+        dz_player_on_event_cb:
+            Used to handle player state changes, just as
+            dz_connect_on_event_cb. See connection module documentation for
+            details.
+
+        dz_activity_operation_cb:
+            Same as those used in connection module. See connection module
+            for details.
+
+"""
+
 from connection import *
-
-libdeezer = cdll.LoadLibrary("libdeezer.so")
-
-void_func = CFUNCTYPE(None, c_void_p)
 
 
 class PlayerInitFailedError(Exception):
@@ -33,7 +65,7 @@ class PlayerActivationError(Exception):
 
 class PlayerEvent:
     """
-        Defines values associated to player events.
+        Defines values associated to player events returned by get_event.
         Use it for your callbacks.
     """
     def __init__(self):
@@ -86,9 +118,7 @@ class Player:
         self._dz_player_init()
 
     def _dz_player_init(self):
-        """
-            Initialize the player ID, mandatory before activation.
-        """
+        """Initialize the player ID, mandatory before activation."""
         self.dz_player = libdeezer.dz_player_new(self.connection.connect_handle)
         if not self.dz_player:
             raise PlayerInitFailedError("Player failed to init. Check that connection is established.")
@@ -96,8 +126,9 @@ class Player:
     def activate(self, supervisor=None):
         """ Activate the player.
 
-        :param supervisor: An application context that will be returned
-            when event occurs.
+        :param supervisor: An object that can be manipulated by your
+            dz_player_on_event_cb to store info.
+        :type supervisor: Same as delegate in dz_player_on_event_cb
         """
         if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
             raise PlayerActivationError("Player activation failed. Check player info and your network connection.")
@@ -105,23 +136,30 @@ class Player:
 
     def set_event_cb(self, cb):
         """
-        Set the callback that will be triggered anytime the player state changes.
+        Set dz_player_on_event_cb that will be triggered anytime the player
+        state changes.
 
         :param cb: The event callback to give.
+        :type cb: function
         """
         if libdeezer.dz_player_set_event_cb(self.dz_player, dz_on_event_cb_func(cb)):
             raise PlayerRequestFailedError(
                 "set_event_cb: Request failed. Check the given callback arguments and return types and/or the player.")
 
-    # TODO: Find user_data use
     def load(self, tracklist_data=None, activity_operation_cb=None, operation_user_data=None):
-        """Load the given track or the current track. On first case,
-            set the current_track to the given track.
+        """Load the given track or the current track.
+
+        In the first case, set the current_track to the given track.
+
         :param tracklist_data: The track/tracklist to load
+        :param activity_operation_cb: A callback triggered after operation.
+        See module docstring.
+        :param operation_user_data:  Any object your operation_callback can
+        manipulate.
         :type tracklist_data: str
-        :param activity_operation_cb: A callback triggered after operation
-        :param operation_user_data:  A reference to user's data
-        :return:
+        :type activity_operation_cb: function
+        :type operation_user_data: Same as operation_user_data in your
+        callback.
         """
         if tracklist_data:
             self.current_track = tracklist_data
@@ -129,8 +167,7 @@ class Player:
                                     self.current_track):
             raise PlayerRequestFailedError("load: Unable to load selected track. Check connection and tracklist data.")
 
-    # TODO: Create mode and command enums. See user data and cb use/type
-    # TODO: Search for command parameter
+    # TODO: Create mode and command enums then update the docstring.
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
         """Play the current track if loaded.
             The player gets data and renders it.
@@ -143,6 +180,7 @@ class Player:
                     ids.
                 Radios: To play a radio, use AUTOPLAY_MODE_NEXT to launch next
                     tracks automatically.
+
         :param command: Player command
         :param mode: Autoplay mode
         :param index: Index of the track to play
