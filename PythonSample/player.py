@@ -217,3 +217,8 @@ class Player:
         """
         self.load()
         self.play()
+
+    @staticmethod
+    def get_event(event_obj):
+        return libdeezer.dz_player_event_get_type(event_obj)
+
