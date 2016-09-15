@@ -74,12 +74,13 @@ class PlayerEvent:
     (
         UNKNOWN,
         LIMITATION_FORCED_PAUSE,
-        PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE,
-        PLAYLIST_TRACK_NO_RIGHT,
-        PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS,
-        PLAYLIST_SKIP_NO_RIGHT,
-        PLAYLIST_TRACK_SELECTED,
-        PLAYLIST_NEED_NATURAL_NEXT,
+        QUEUELIST_LOADED,
+        QUEUELIST_NO_RIGHT,
+        QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE,
+        QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS,
+        QUEUELIST_SKIP_NO_RIGHT,
+        QUEUELIST_TRACK_SELECTED,
+        QUEUELIST_NEED_NATURAL_NEXT,
         MEDIASTREAM_DATA_READY,
         MEDIASTREAM_DATA_READY_AFTER_SEEK,
         RENDER_TRACK_START_FAILURE,
@@ -90,7 +91,24 @@ class PlayerEvent:
         RENDER_TRACK_UNDERFLOW,
         RENDER_TRACK_RESUMED,
         RENDER_TRACK_REMOVED
-    ) = range(0, 18)
+    ) = range(0, 19)
+
+
+class PlayerCommand:
+    """Defines commands to update player's state"""
+    def __init__(self):
+        pass
+
+    (
+        UNKNOWN,
+        START_TRACKLIST,
+        JUMP_IN_TRACKLIST,
+        NEXT,
+        PREV,
+        DISLIKE,
+        NATURAL_END,
+        RESUMED_AFTER_ADS
+    ) = range(0, 8)
 
 
 class Player:
@@ -124,7 +142,7 @@ class Player:
             raise PlayerInitFailedError("Player failed to init. Check that connection is established.")
 
     def activate(self, supervisor=None):
-        """ Activate the player.
+        """Activate the player.
 
         :param supervisor: An object that can be manipulated by your
             dz_player_on_event_cb to store info.
@@ -167,28 +185,21 @@ class Player:
                                     self.current_track):
             raise PlayerRequestFailedError("load: Unable to load selected track. Check connection and tracklist data.")
 
-    # TODO: Create mode and command enums then update the docstring.
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
         """Play the current track if loaded.
             The player gets data and renders it.
 
-            The player can be used in several ways:
-                Albums and Playlists: SDK does not currently support playing
-                    albums and playlists directly. Instead you need to play
-                    them track by track.
-                    To do so, use AUTOPLAY_MODE as mode and pass_in the track
-                    ids.
-                Radios: To play a radio, use AUTOPLAY_MODE_NEXT to launch next
-                    tracks automatically.
-
         :param command: Player command
-        :param mode: Autoplay mode
         :param index: Index of the track to play
         :param activity_operation_cb: Called when async result is available
         :param operation_user_data: A reference to user's data
+        :type command: PlayerCommand
+        :type index: int
+        :type activity_operation_cb: function
+        :type operation_user_data: Same as operation_user_data in your callback
         """
         if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
-                                    command, mode, index) not in range(0, 2):
+                                    command, index) not in range(0, 2):
             raise PlayerRequestFailedError("play: Unable to play selected track. Check player commands and info.")
 
     def shutdown(self):
