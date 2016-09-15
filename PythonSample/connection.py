@@ -113,7 +113,6 @@ class ConnectionActivationError(Exception):
         return repr(self.value)
 
 
-# TODO: error_t enum
 class ConnectionEvent:
     """Defines values associated to connection events.
         In the on_event_callbacks you define, you can convert the event object

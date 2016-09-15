@@ -7,7 +7,7 @@ from myDeezerApp import *
 
 def main():
     # Identifiers
-    user_access_token = "frBhmeUmcYlXEIR7CjiuHmPnEBey7FUjC3VyWzNDgkAYxPoqD0E"  # SET your user access token
+    user_access_token = "frDR1HU01CvUv9SQoqSTYUNp4iqVvRfe2qk8FqxMfxmTBadFEWn"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
@@ -24,17 +24,17 @@ def main():
     )
 
     # We set the callback for player events, to print various logs and listen to events
-    # TODO: use player's get_event function, not connection's
     def player_event_callback(handle, event, delegate):
         event_names = [
             'UNKNOWN',
             'LIMITATION_FORCED_PAUSE',
-            'PLAYLIST_TRACK_NOT_AVAILABLE_OFFLINE',
-            'PLAYLIST_TRACK_NO_RIGHT',
-            'PLAYLIST_TRACK_RIGHTS_AFTER_AUDIOADS',
-            'PLAYLIST_SKIP_NO_RIGHT',
-            'PLAYLIST_TRACK_SELECTED',
-            'PLAYLIST_NEED_NATURAL_NEXT',
+            'QUEUELIST_LOADED',
+            'QUEUELIST_TRACK_NO_RIGHT',
+            'QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE',
+            'QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS',
+            'QUEUELIST_SKIP_NO_RIGHT',
+            'QUEUELIST_TRACK_SELECTED',
+            'QUEUELIST_NEED_NATURAL_NEXT',
             'MEDIASTREAM_DATA_READY',
             'MEDIASTREAM_DATA_READY_AFTER_SEEK',
             'RENDER_TRACK_START_FAILURE',
@@ -48,13 +48,9 @@ def main():
         ]
         streaming_mode = c_int()
         idx = c_int()
-        event_type = Connection.get_event(event)
-        # TODO: wrap libdeezer calls in Connection/Player classes
-        if not libdeezer.dz_player_event_get_playlist_context(c_void_p(event), byref(streaming_mode), byref(idx)):
-            streaming_mode = StreamingMode.ON_DEMAND
-            idx = -1
+        event_type = Player.get_event(event)
         # Print track info after the track is loaded and selected
-        if event_type == PlayerEvent.PLAYLIST_TRACK_SELECTED:
+        if event_type == PlayerEvent.QUEUELIST_TRACK_SELECTED:
             can_pause_unpause = c_bool()
             can_seek = c_bool()
             no_skip_allowed = c_int()
@@ -86,7 +82,7 @@ def main():
                 app.player.shutdown()
             else:
                 app.player.launch_play()
-        if event_type == PlayerEvent.PLAYLIST_NEED_NATURAL_NEXT:
+        if event_type == PlayerEvent.QUEUELIST_NEED_NATURAL_NEXT:
             app.player.launch_play()
         return 0
 
