@@ -37,6 +37,7 @@
 """
 
 from connection import *
+import ctypes
 
 
 class PlayerInitFailedError(Exception):
@@ -148,7 +149,8 @@ class Player:
             dz_player_on_event_cb to store info.
         :type supervisor: Same as delegate in dz_player_on_event_cb
         """
-        if libdeezer.dz_player_activate(self.dz_player, c_void_p(supervisor)):
+        delegate = byref(supervisor) if supervisor else c_void_p(0)
+        if libdeezer.dz_player_activate(self.dz_player, delegate):
             raise PlayerActivationError("Player activation failed. Check player info and your network connection.")
         self.active = True
 
@@ -177,7 +179,7 @@ class Player:
         :type tracklist_data: str
         :type activity_operation_cb: function
         :type operation_user_data: Same as operation_user_data in your
-        callback.
+        callback. Must inherit from Structure as it is used by ctypes
         """
         if tracklist_data:
             self.current_track = tracklist_data
@@ -196,7 +198,8 @@ class Player:
         :type command: PlayerCommand
         :type index: int
         :type activity_operation_cb: function
-        :type operation_user_data: Same as operation_user_data in your callback
+        :type operation_user_data: Same as operation_user_data in your callback.
+            Must inherit from structure as it is used by ctypes.
         """
         if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
                                     command, index) not in range(0, 2):
@@ -220,5 +223,5 @@ class Player:
 
     @staticmethod
     def get_event(event_obj):
-        return libdeezer.dz_player_event_get_type(event_obj)
+        return libdeezer.dz_player_event_get_type(c_void_p(event_obj))
 

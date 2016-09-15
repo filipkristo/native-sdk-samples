@@ -57,9 +57,10 @@
 
         dz_connect_crash_reporting_delegate:
         Takes nothing an returns a boolean.
+        Use this to call your own crash reporting system. If left to None, the
+        SDK will use its own crash reporting system (Breakpad).
 
 """
-# TODO: ask about dz_crash_reporting_delegate
 
 
 from ctypes import *
@@ -184,10 +185,10 @@ class Connection:
         :type dz_connect_on_event_cb: function
         :type dz_connect_crash_reporting_delegate: function
         """
-        self.app_id = app_id
-        self.product_id = product_id
-        self.product_build_id = product_build_id
-        self.user_profile_path = user_profile_path
+        self.app_id = app_id.encode('utf8')
+        self.product_id = product_id.encode('utf8')
+        self.product_build_id = product_build_id.encode('utf8')
+        self.user_profile_path = user_profile_path.encode('utf8')
         self.dz_connect_on_event_cb = dz_on_event_cb_func(dz_connect_on_event_cb)
         self.anonymous_blob = anonymous_blob
         self.dz_connect_crash_reporting_delegate = dz_connect_crash_reporting_delegate_func(
@@ -213,7 +214,6 @@ class Connection:
         if not self.connect_handle:
             raise ConnectionInitFailedError('Connection handle failed to initialize. Check connection info you gave.')
 
-    # TODO: try to pass user data
     def set_event_cb(self, callback):
         """
         Set dz_connect_on_event_cb, a callback called after each state change.
@@ -246,7 +246,8 @@ class Connection:
 
         :param user_data: A reference to an object you want to pass to
             dz_connect_on_event_cb.
-        :type user_data: Same as user_data in dz_connect_on_event_cb
+        :type user_data: Same as user_data in dz_connect_on_event_cb.
+            Must inherit from structure as it is used in ctypes.
         """
         if libdeezer.dz_connect_activate(self.connect_handle, c_void_p(user_data)):
             raise ConnectionActivationError('Failed to activate connection. Check your network connection.')
@@ -284,7 +285,8 @@ class Connection:
         :type user_access_token: str
         :type activity_operation_cb: function
         :type operation_user_data: Same as operation_userdata in
-            activity_operation_cb
+            activity_operation_cb. Must inherit from structure as it is used by
+            ctypes
         """
         if libdeezer.dz_connect_set_access_token(self.connect_handle, activity_operation_cb, operation_user_data,
                                                  c_char_p(user_access_token)):
@@ -302,7 +304,8 @@ class Connection:
             if just to allow connection.
         :type activity_operation_cb: function
         :type operation_user_data: Same as operation_userdata in
-            activity_operation_cb
+            activity_operation_cb. Must iherit from Structure as it is used by
+            ctypes.
         :type offline_mode_forced: bool
         """
         if libdeezer.dz_connect_offline_mode(self.connect_handle, activity_operation_cb, operation_user_data,

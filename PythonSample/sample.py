@@ -4,10 +4,11 @@ import time
 import platform
 from myDeezerApp import *
 
+#TODO: encode all strings given to libdeezer in utf-8
 
 def main():
     # Identifiers
-    user_access_token = "frDR1HU01CvUv9SQoqSTYUNp4iqVvRfe2qk8FqxMfxmTBadFEWn"  # SET your user access token
+    user_access_token = "fr3shnUc8AhNOTwa4OTdjiNa9WjzaxLRMKRj8lZWwcdHQB99P6g"  # SET your user access token
     your_application_id = "190262"  # SET your application id
     your_application_name = "PythonSampleApp"  # SET your application name
     your_application_version = "00001"  # SET your application version
