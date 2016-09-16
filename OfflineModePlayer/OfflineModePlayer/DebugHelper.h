@@ -17,7 +17,7 @@
 #ifdef DEBUG
 #define DebugLog(args...) ExtendNSLog(__FILE__,__LINE__,__PRETTY_FUNCTION__,args);
 #else
-#define DebugLog(x...) NSLog(args);
+#define DebugLog(x...) NSLog(x);
 #endif
 
 #ifdef DEBUG_ENTER_EXIT_FUNCTION
