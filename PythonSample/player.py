@@ -196,6 +196,7 @@ class Player:
         :param index: Index of the track to play
         :param activity_operation_cb: Called when async result is available
         :param operation_user_data: A reference to user's data
+        :param mode: Deprecated
         :type command: PlayerCommand
         :type index: int
         :type activity_operation_cb: function
