@@ -63,8 +63,14 @@
 """
 
 from ctypes import *
+import platform
 
-libdeezer = cdll.LoadLibrary('libdeezer.so')
+lib_name = 'libdeezer.so'
+if platform.system() == 'Darwin':
+    lib_name = 'libdeezer'
+if platform.system() == 'Windows':
+    lib_name = 'libdeezer.x86.dll'
+libdeezer = cdll.LoadLibrary(lib_name)
 
 dz_on_event_cb_func = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
 dz_connect_crash_reporting_delegate_func = CFUNCTYPE(c_bool)
