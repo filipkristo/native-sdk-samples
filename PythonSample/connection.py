@@ -62,7 +62,6 @@
 
 """
 
-
 from ctypes import *
 
 libdeezer = cdll.LoadLibrary('libdeezer.so')
@@ -119,6 +118,7 @@ class ConnectionEvent:
         In the on_event_callbacks you define, you can convert the event object
         to an integer corresponding to a value of this class using get_event
     """
+
     def __init__(self):
         pass
 
@@ -140,6 +140,7 @@ class ConnectionEvent:
 
 class StreamingMode:
     """Defines values associated to the streaming mode"""
+
     def __init__(self):
         pass
 
@@ -168,6 +169,7 @@ class Connection:
             connect_handle           The ID used for all operations initialized
                                      after given connection info
     """
+
     def __init__(self, app_id='', product_id='', product_build_id='', user_profile_path='/var/tmp/dzrcache_NDK_SAMPLE',
                  dz_connect_on_event_cb=None, anonymous_blob=None, dz_connect_crash_reporting_delegate=None):
         """
@@ -249,7 +251,8 @@ class Connection:
         :type user_data: Same as user_data in dz_connect_on_event_cb.
             Must inherit from structure as it is used in ctypes.
         """
-        if libdeezer.dz_connect_activate(self.connect_handle, c_void_p(user_data)):
+        delegate = byref(user_data) if user_data else c_void_p(0)
+        if libdeezer.dz_connect_activate(self.connect_handle, delegate):
             raise ConnectionActivationError('Failed to activate connection. Check your network connection.')
         self.active = True
 
@@ -268,8 +271,11 @@ class Connection:
         :type operation_userdata: Same as operation_userdata in
             activity_operation_cb
         """
-        if libdeezer.dz_connect_cache_path_set(self.connect_handle, activity_operation_cb, operation_userdata,
-                                               c_char_p(user_cache_path)):
+        delegate = byref(operation_userdata) if operation_userdata else c_void_p(0)
+        cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
+        # TODO: convert activity_operation_cb before passing to libdeezer
+        if libdeezer.dz_connect_cache_path_set(self.connect_handle, cb, delegate,
+                                               c_char_p(user_cache_path.encode('utf8'))):
             raise ConnectionRequestFailedError('cache_path_set: Request failed. Check connection and/or path validity.')
 
     def set_access_token(self, user_access_token, activity_operation_cb=None, operation_user_data=None):
@@ -288,8 +294,11 @@ class Connection:
             activity_operation_cb. Must inherit from structure as it is used by
             ctypes
         """
-        if libdeezer.dz_connect_set_access_token(self.connect_handle, activity_operation_cb, operation_user_data,
-                                                 c_char_p(user_access_token)):
+        # TODO: convert activity_operation_cb before passing to libdeezer
+        delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_connect_set_access_token(self.connect_handle, cb, delegate,
+                                                 c_char_p(user_access_token.encode('utf8'))):
             raise ConnectionRequestFailedError('set_access_token: Request failed. Check access token or update it.')
 
     def connect_offline_mode(self, activity_operation_cb=None, operation_user_data=None, offline_mode_forced=False):
@@ -308,8 +317,9 @@ class Connection:
             ctypes.
         :type offline_mode_forced: bool
         """
-        if libdeezer.dz_connect_offline_mode(self.connect_handle, activity_operation_cb, operation_user_data,
-                                             c_bool(offline_mode_forced)):
+        delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_connect_offline_mode(self.connect_handle, cb, delegate, c_bool(offline_mode_forced)):
             raise ConnectionRequestFailedError(
                 'connect_offline_mode: Request failed. Check connection and callbacks if used.')
 
@@ -323,4 +333,3 @@ class Connection:
     def get_event(event_obj):
         """Get the event value from the event_obj given by the SDK."""
         return int(libdeezer.dz_player_event_get_type(c_void_p(event_obj)))
-

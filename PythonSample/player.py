@@ -175,7 +175,7 @@ class Player:
         :param activity_operation_cb: A callback triggered after operation.
         See module docstring.
         :param operation_user_data:  Any object your operation_callback can
-        manipulate.
+        manipulate. Must inherit from Structure class.
         :type tracklist_data: str
         :type activity_operation_cb: function
         :type operation_user_data: Same as operation_user_data in your
@@ -183,8 +183,9 @@ class Player:
         """
         if tracklist_data:
             self.current_track = tracklist_data
-        if libdeezer.dz_player_load(self.dz_player, activity_operation_cb, operation_user_data,
-                                    self.current_track):
+        delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_player_load(self.dz_player, cb, delegate, self.current_track):
             raise PlayerRequestFailedError("load: Unable to load selected track. Check connection and tracklist data.")
 
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
@@ -201,8 +202,9 @@ class Player:
         :type operation_user_data: Same as operation_user_data in your callback.
             Must inherit from structure as it is used by ctypes.
         """
-        if libdeezer.dz_player_play(self.dz_player, activity_operation_cb, operation_user_data,
-                                    command, index) not in range(0, 2):
+        delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_player_play(self.dz_player, cb, delegate, command, index) not in range(0, 2):
             raise PlayerRequestFailedError("play: Unable to play selected track. Check player commands and info.")
 
     def shutdown(self):
