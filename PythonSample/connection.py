@@ -236,13 +236,13 @@ class Connection:
         """
         :return: The device ID for logs
         """
-        return libdeezer.dz_connect_get_device_id(self.connect_handle)
+        return libdeezer.dz_connect_get_device_id(c_void_p(self.connect_handle))
 
     def debug_log_disable(self):
         """
         Mute all API logs for readability's sake
         """
-        if libdeezer.dz_connect_debug_log_disable(self.connect_handle):
+        if libdeezer.dz_connect_debug_log_disable(c_void_p(self.connect_handle)):
             raise ConnectionRequestFailedError('debug_log_disable: Request failed.')
 
     def activate(self, user_data=None):
@@ -258,7 +258,7 @@ class Connection:
             Must inherit from structure as it is used in ctypes.
         """
         delegate = byref(user_data) if user_data else c_void_p(0)
-        if libdeezer.dz_connect_activate(self.connect_handle, delegate):
+        if libdeezer.dz_connect_activate(c_void_p(self.connect_handle), delegate):
             raise ConnectionActivationError('Failed to activate connection. Check your network connection.')
         self.active = True
 
@@ -280,7 +280,7 @@ class Connection:
         delegate = byref(operation_userdata) if operation_userdata else c_void_p(0)
         cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
         # TODO: convert activity_operation_cb before passing to libdeezer
-        if libdeezer.dz_connect_cache_path_set(self.connect_handle, cb, delegate,
+        if libdeezer.dz_connect_cache_path_set(c_void_p(self.connect_handle), cb, delegate,
                                                c_char_p(user_cache_path.encode('utf8'))):
             raise ConnectionRequestFailedError('cache_path_set: Request failed. Check connection and/or path validity.')
 
@@ -303,7 +303,7 @@ class Connection:
         # TODO: convert activity_operation_cb before passing to libdeezer
         delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
         cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
-        if libdeezer.dz_connect_set_access_token(self.connect_handle, cb, delegate,
+        if libdeezer.dz_connect_set_access_token(c_void_p(self.connect_handle), cb, delegate,
                                                  c_char_p(user_access_token.encode('utf8'))):
             raise ConnectionRequestFailedError('set_access_token: Request failed. Check access token or update it.')
 
@@ -325,14 +325,14 @@ class Connection:
         """
         delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
         cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
-        if libdeezer.dz_connect_offline_mode(self.connect_handle, cb, delegate, c_bool(offline_mode_forced)):
+        if libdeezer.dz_connect_offline_mode(c_void_p(self.connect_handle), cb, delegate, c_bool(offline_mode_forced)):
             raise ConnectionRequestFailedError(
                 'connect_offline_mode: Request failed. Check connection and callbacks if used.')
 
     def shutdown(self):
         """Deactivate connection associated to the handle."""
         if self.connect_handle:
-            libdeezer.dz_connect_deactivate(self.connect_handle, c_void_p(0), None)
+            libdeezer.dz_connect_deactivate(c_void_p(self.connect_handle), c_void_p(0), None)
             self.active = False
 
     @staticmethod
