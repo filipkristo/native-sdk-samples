@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    dzerr = dz_connect_activate(app_ctxt->dzconnect, NULL);
+    dzerr = dz_connect_activate(app_ctxt->dzconnect, app_ctxt);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_connect_activate error\n");
         return -1;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    dzerr = dz_player_activate(app_ctxt->dzplayer, NULL);
+    dzerr = dz_player_activate(app_ctxt->dzplayer, app_ctxt);
     if (dzerr != DZ_ERROR_NO_ERROR) {
         log("dz_player_activate error\n");
         return -1;
@@ -233,59 +233,62 @@ void app_connect_onevent_cb(dz_connect_handle handle,
                             void* delegate) {
 
     dz_connect_event_t type = dz_connect_event_get_type(event);
+
+    app_context_handle context = (app_context_handle)delegate;
+
     switch (type) {
         case DZ_CONNECT_EVENT_USER_OFFLINE_AVAILABLE:
-            log("++++ CONNECT_EVENT ++++ USER_OFFLINE_AVAILABLE\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_OFFLINE_AVAILABLE\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_ACCESS_TOKEN_OK:
             {
                 const char* szAccessToken;
                 szAccessToken = dz_connect_event_get_access_token(event);
-                log("++++ CONNECT_EVENT ++++ USER_ACCESS_TOKEN_OK Access_token : %s\n", szAccessToken);
+                log("(App:%p) ++++ CONNECT_EVENT ++++ USER_ACCESS_TOKEN_OK Access_token : %s\n",context, szAccessToken);
             }
             break;
 
         case DZ_CONNECT_EVENT_USER_ACCESS_TOKEN_FAILED:
-            log("++++ CONNECT_EVENT ++++ USER_ACCESS_TOKEN_FAILED\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_ACCESS_TOKEN_FAILED\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_LOGIN_OK:
-            log("++++ CONNECT_EVENT ++++ USER_LOGIN_OK\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_LOGIN_OK\n",context);
             app_load_content();
             break;
 
         case DZ_CONNECT_EVENT_USER_NEW_OPTIONS:
-            log("++++ CONNECT_EVENT ++++ USER_NEW_OPTIONS\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_NEW_OPTIONS\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_LOGIN_FAIL_NETWORK_ERROR:
-            log("++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_NETWORK_ERROR\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_NETWORK_ERROR\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_LOGIN_FAIL_BAD_CREDENTIALS:
-            log("++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_BAD_CREDENTIALS\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_BAD_CREDENTIALS\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_LOGIN_FAIL_USER_INFO:
-            log("++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_USER_INFO\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_USER_INFO\n",context);
             break;
 
         case DZ_CONNECT_EVENT_USER_LOGIN_FAIL_OFFLINE_MODE:
-            log("++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_OFFLINE_MODE\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ USER_LOGIN_FAIL_OFFLINE_MODE\n",context);
             break;
 
         case DZ_CONNECT_EVENT_ADVERTISEMENT_START:
-            log("++++ CONNECT_EVENT ++++ ADVERTISEMENT_START\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ ADVERTISEMENT_START\n",context);
             break;
 
         case DZ_CONNECT_EVENT_ADVERTISEMENT_STOP:
-            log("++++ CONNECT_EVENT ++++ ADVERTISEMENT_STOP\n");
+            log("(App:%p) ++++ CONNECT_EVENT ++++ ADVERTISEMENT_STOP\n",context);
             break;
 
         case DZ_CONNECT_EVENT_UNKNOWN:
         default:
-            log("++++ CONNECT_EVENT ++++ UNKNOWN or default (type = %d)\n",type);
+            log("(App:%p) ++++ CONNECT_EVENT ++++ UNKNOWN or default (type = %d)\n",context,type);
             break;
     }
 }
@@ -396,6 +399,7 @@ void app_player_onevent_cb( dz_player_handle       handle,
 
     dz_streaming_mode_t   streaming_mode;
     dz_index_in_queuelist idx;
+    app_context_handle context = (app_context_handle)supervisor;
 
     dz_player_event_t type = dz_player_event_get_type(event);
 
@@ -413,33 +417,33 @@ void app_player_onevent_cb( dz_player_handle       handle,
     switch (type) {
 
         case DZ_PLAYER_EVENT_LIMITATION_FORCED_PAUSE:
-            log("==== PLAYER_EVENT ==== LIMITATION_FORCED_PAUSE for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== LIMITATION_FORCED_PAUSE for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_LOADED:
-            log("==== PLAYER_EVENT ==== QUEUELIST_LOADED for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_LOADED for idx: %d\n", context, idx);
             //app_playback_start_or_stop();
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_NO_RIGHT:
-            log("==== PLAYER_EVENT ==== QUEUELIST_NO_RIGHT for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_NO_RIGHT for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_NEED_NATURAL_NEXT:
-            log("==== PLAYER_EVENT ==== QUEUELIST_NEED_NATURAL_NEXT for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_NEED_NATURAL_NEXT for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE:
-            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_TRACK_NOT_AVAILABLE_OFFLINE for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS:
-            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS for idx: %d\n", context, idx);
             dz_player_play_audioads(app_ctxt->dzplayer, NULL, NULL);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_SKIP_NO_RIGHT:
-            log("==== PLAYER_EVENT ==== QUEUELIST_SKIP_NO_RIGHT for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_SKIP_NO_RIGHT for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_QUEUELIST_TRACK_SELECTED:
@@ -458,7 +462,7 @@ void app_player_onevent_cb( dz_player_handle       handle,
             selected_dzapiinfo = dz_player_event_track_selected_dzapiinfo(event);
             next_dzapiinfo = dz_player_event_track_selected_next_track_dzapiinfo(event);
 
-            log("==== PLAYER_EVENT ==== QUEUELIST_TRACK_SELECTED for idx: %d - is_preview:%d\n", idx, is_preview);
+            log("(App:%p) ==== PLAYER_EVENT ==== QUEUELIST_TRACK_SELECTED for idx: %d - is_preview:%d\n", context, idx, is_preview);
             log("\tcan_pause_unpause:%d can_seek:%d nb_skip_allowed:%d\n", can_pause_unpause, can_seek, nb_skip_allowed);
             if (selected_dzapiinfo)
                 log("\tnow:%s\n", selected_dzapiinfo);
@@ -470,25 +474,25 @@ void app_player_onevent_cb( dz_player_handle       handle,
             break;
 
         case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY:
-            log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_MEDIASTREAM_DATA_READY_AFTER_SEEK:
-            log("==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY_AFTER_SEEK for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== MEDIASTREAM_DATA_READY_AFTER_SEEK for idx: %d\n", context, idx);
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_START_FAILURE:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_START_FAILURE for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_START_FAILURE for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_START:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_START for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_START for idx: %d\n", context, idx);
             app_ctxt->is_playing = true;
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_END:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_END for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_END for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             log("- nb_track_played : %d\n",app_ctxt->nb_track_played);
             // Detect if we come from from playing an ad, if yes restart automatically the playback.
@@ -498,33 +502,33 @@ void app_player_onevent_cb( dz_player_handle       handle,
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_PAUSED:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_PAUSED for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_PAUSED for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_UNDERFLOW:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_UNDERFLOW for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_UNDERFLOW for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             break;
 
         case DZ_PLAYER_EVENT_RENDER_TRACK_RESUMED:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_RESUMED for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_RESUMED for idx: %d\n", context, idx);
             app_ctxt->is_playing = true;
             break;
             
         case DZ_PLAYER_EVENT_RENDER_TRACK_SEEKING:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_SEEKING for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_SEEKING for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             break;
             
         case DZ_PLAYER_EVENT_RENDER_TRACK_REMOVED:
-            log("==== PLAYER_EVENT ==== RENDER_TRACK_REMOVED for idx: %d\n", idx);
+            log("(App:%p) ==== PLAYER_EVENT ==== RENDER_TRACK_REMOVED for idx: %d\n", context, idx);
             app_ctxt->is_playing = false;
             break;
             
         case DZ_PLAYER_EVENT_UNKNOWN:
         default:
-            log("==== PLAYER_EVENT ==== UNKNOWN or default (type = %d)\n",type);
+            log("(App:%p) ==== PLAYER_EVENT ==== UNKNOWN or default (type = %d)\n", context,type);
             break;
     }
 }
