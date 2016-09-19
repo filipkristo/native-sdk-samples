@@ -130,7 +130,7 @@ class Player:
         """
         self.connection = connection
         self.dz_player = 0
-        self.current_track = "dzmedia:///track/3135556"
+        self.track = None
         self.active = False
         self.nb_tracks_played = 0
         self.nb_tracks_to_play = 1
@@ -138,7 +138,7 @@ class Player:
 
     def _dz_player_init(self):
         """Initialize the player ID, mandatory before activation."""
-        self.dz_player = libdeezer.dz_player_new(self.connection.connect_handle)
+        self.dz_player = libdeezer.dz_player_new(c_void_p(self.connection.connect_handle))
         if not self.dz_player:
             raise PlayerInitFailedError("Player failed to init. Check that connection is established.")
 
@@ -182,10 +182,10 @@ class Player:
         callback. Must inherit from Structure as it is used by ctypes
         """
         if tracklist_data:
-            self.current_track = tracklist_data
+            self.track = tracklist_data
         delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
         cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
-        if libdeezer.dz_player_load(self.dz_player, cb, delegate, self.current_track):
+        if libdeezer.dz_player_load(self.dz_player, cb, delegate, self.track):
             raise PlayerRequestFailedError("load: Unable to load selected track. Check connection and tracklist data.")
 
     def play(self, command=1, mode=1, index=0, activity_operation_cb=None, operation_user_data=None):
