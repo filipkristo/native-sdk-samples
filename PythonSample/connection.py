@@ -254,10 +254,9 @@ class Connection:
 
         :param user_data: A reference to an object you want to pass to
             dz_connect_on_event_cb.
-        :type user_data: Same as user_data in dz_connect_on_event_cb.
-            Must inherit from structure as it is used in ctypes.
+        :type user_data: The type of the object you want to manipulate
         """
-        delegate = byref(user_data) if user_data else c_void_p(0)
+        delegate = py_object(user_data) if user_data else c_void_p(0)
         if libdeezer.dz_connect_activate(c_void_p(self.connect_handle), delegate):
             raise ConnectionActivationError('Failed to activate connection. Check your network connection.')
         self.active = True
@@ -270,12 +269,10 @@ class Connection:
 
         :param user_cache_path: The desired path
         :param activity_operation_cb: The callback to this function.
-        :param operation_userdata: A reference to an object you want to pass to
-            activity_operation_cb.
+        :param operation_userdata: A reference to an object you want to pass to activity_operation_cb.
         :type user_cache_path: str
         :type activity_operation_cb: function
-        :type operation_userdata: Same as operation_userdata in
-            activity_operation_cb
+        :type operation_userdata: The type of the object you want to manipulate
         """
         delegate = byref(operation_userdata) if operation_userdata else c_void_p(0)
         cb = byref(dz_activity_operation_cb_func(activity_operation_cb)) if activity_operation_cb else c_void_p(0)
@@ -296,9 +293,7 @@ class Connection:
             activity_operation_cb.
         :type user_access_token: str
         :type activity_operation_cb: function
-        :type operation_user_data: Same as operation_userdata in
-            activity_operation_cb. Must inherit from structure as it is used by
-            ctypes
+        :type operation_user_data: The type of the object you want to manipulate
         """
         # TODO: convert activity_operation_cb before passing to libdeezer
         delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)
@@ -318,9 +313,7 @@ class Connection:
         :param offline_mode_forced: Force offline mode. Leave to False
             if just to allow connection.
         :type activity_operation_cb: function
-        :type operation_user_data: Same as operation_userdata in
-            activity_operation_cb. Must iherit from Structure as it is used by
-            ctypes.
+        :type operation_user_data: The type of the object you want to manipulate
         :type offline_mode_forced: bool
         """
         delegate = byref(operation_user_data) if operation_user_data else c_void_p(0)

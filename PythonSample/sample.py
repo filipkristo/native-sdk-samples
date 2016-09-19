@@ -4,7 +4,7 @@ from myDeezerApp import *
 
 
 def main():
-    app = MyDeezerApp(True)
+    app = MyDeezerApp(False)
     app.set_song("dzmedia:///track/85509044")
     app.start()
     return 0

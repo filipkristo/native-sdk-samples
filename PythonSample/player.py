@@ -149,7 +149,7 @@ class Player:
             dz_player_on_event_cb to store info.
         :type supervisor: Same as delegate in dz_player_on_event_cb
         """
-        delegate = byref(supervisor) if supervisor else c_void_p(0)
+        delegate = py_object(supervisor) if supervisor else c_void_p(0)
         if libdeezer.dz_player_activate(self.dz_player, delegate):
             raise PlayerActivationError("Player activation failed. Check player info and your network connection.")
         self.active = True
