@@ -1,5 +1,6 @@
 NativeSDK
 *.o
+.*.swp
 NanoPlayer/NanoPlayer
 
 # on MacOS/Xcode
