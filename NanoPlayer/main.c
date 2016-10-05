@@ -24,8 +24,6 @@ typedef struct {
     int                   activation_count;
     dz_connect_handle     dzconnect;
     dz_player_handle      dzplayer;
-    dz_streaming_mode_t   streaming_mode;
-    dz_index_in_queuelist current_idx_in_queuelist;
     dz_queuelist_repeat_mode_t repeat_mode;
     bool                  is_shuffle_mode;
 } app_context;
@@ -317,15 +315,10 @@ static void app_playback_start_or_stop() {
 
     if (!app_ctxt->is_playing) {
         log("PLAY track n° %d of => %s\n", app_ctxt->nb_track_played, app_ctxt->sz_content_url);
-        if (app_ctxt->streaming_mode == DZ_STREAMING_MODE_ONDEMAND) {
-            dz_player_play(app_ctxt->dzplayer, NULL, NULL,
-                           DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
-                           DZ_INDEX_IN_QUEUELIST_CURRENT);
-        } else if (app_ctxt->streaming_mode == DZ_STREAMING_MODE_RADIO) {
-            dz_player_play(app_ctxt->dzplayer, NULL, NULL,
-                           DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
-                           DZ_INDEX_IN_QUEUELIST_CURRENT);
-        }
+        dz_player_play(app_ctxt->dzplayer, NULL, NULL,
+                       DZ_PLAYER_PLAY_CMD_START_TRACKLIST,
+                       DZ_INDEX_IN_QUEUELIST_CURRENT);
+
     } else {
         log("STOP => %s\n", app_ctxt->sz_content_url);
         dz_player_stop(app_ctxt->dzplayer, NULL, NULL);
@@ -406,12 +399,6 @@ void app_player_onevent_cb( dz_player_handle       handle,
     if (!dz_player_event_get_queuelist_context(event, &streaming_mode, &idx)) {
         streaming_mode = DZ_STREAMING_MODE_ONDEMAND;
         idx = DZ_INDEX_IN_QUEUELIST_INVALID;
-    }
-
-    // Update the streaming mode if relevant
-    if (streaming_mode != DZ_STREAMING_MODE_UNKNOWN) {
-        app_ctxt->streaming_mode = streaming_mode;
-        app_ctxt->current_idx_in_queuelist = idx;
     }
 
     switch (type) {
