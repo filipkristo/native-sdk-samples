@@ -15,30 +15,6 @@ UnityPlayer is a C# application using Native SDK. It displays a player UI and al
 
 * Download the latest version of the [Deezer Native SDK][1]
 * Unzip it and place the folder, renamed into NativeSDK, at the root of this repository, such as shown below:
-```
-<native-sdk-samples>
-├── NativeSDK
-│       ├── Bins
-│       │      └── Platforms
-│       ├── Linux
-│       │   ├── arm
-│       │   │   └── libdeezer.so
-│       │   ├── i386
-│       │   │   └── libdeezer.so
-│       │   └── x86_64
-│       │       └── libdeezer.so
-│       ├── MacOSX
-│       │   └── libdeezer.framework
-│       │       └── Versions
-│       │           	└── Current
-│       │               	└── libdeezer
-│       └── Windows
-│           └── DLLs
-│               ├── libdeezer.x64.dll
-│               └── libdeezer.x86.dll
-├── UnityPlayer
-└── README.md
-```
 
 * This folder contains the Bins of the library depending on the platform:
 
@@ -64,7 +40,7 @@ UnityPlayer is a C# application using Native SDK. It displays a player UI and al
 	               └── libdeezer.x86.dll
 ```
 
-* Copy the library corresponding to your architecture into the UnityPlayer/Assets folder. If you are running on MacOSX, rename it "libdeezer.bundle" and on Windows "libdeezer.dll".
+* Copy the library corresponding to your architecture into the UnityPlayer/Assets folder. **If you are running on MacOSX, rename it "libdeezer.bundle" and on Windows "libdeezer.dll".**
 * Open Unity
 * Go to File > Open Project
 * Select the folder UnityPlayer
