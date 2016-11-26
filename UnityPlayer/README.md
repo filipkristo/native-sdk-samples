@@ -33,7 +33,7 @@ UnityPlayer is a C# application using Native SDK. It displays a player UI and al
 	       │   └── libdeezer.framework
 	       │       └── Versions
 	       │           	└── Current
-	       │               	└── libdeezer
+	       │               	└── libdeezer < On OSX copy this file in the assets & rename it to **libdeezer.bundle**
 	       └── Windows
 	           └── DLLs
 	               ├── libdeezer.x64.dll
