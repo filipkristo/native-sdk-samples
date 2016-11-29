@@ -58,7 +58,6 @@ LDFLAGS=-framework SystemConfiguration \
         -framework AudioUnit \
         -framework AudioToolbox \
         -framework IOKit \
-        -lstdc++ \
         -framework libdeezer \
         -iframework $(SDK_LIB_DIR)
 #On Mac OS we need to force the path where the libdeezer framework is
