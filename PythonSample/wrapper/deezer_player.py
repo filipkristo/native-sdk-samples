@@ -315,8 +315,8 @@ class Player:
     @staticmethod
     def get_queuelist_context(event, streaming_mode, idx):
         return libdeezer.dz_player_event_get_queuelist_context(c_void_p(event),
-                                                               byref(c_uint(streaming_mode)),
-                                                               byref(c_uint(idx)))
+                                                               byref(streaming_mode),
+                                                               byref(idx))
 
     @staticmethod
     def is_selected_track_preview(event_handle):

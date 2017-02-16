@@ -290,5 +290,5 @@ class Connection:
     @staticmethod
     def get_build_id():
         """Return the build id of libdeezer"""
-        return int(libdeezer.dz_connect_get_build_id())
+        return libdeezer.dz_connect_get_build_id()
 

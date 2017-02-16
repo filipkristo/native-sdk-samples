@@ -58,13 +58,19 @@ def log_command_info():
 
 def main():
     app = MyDeezerApp(True)
+
     log_connect_info(app)
+
     if len(sys.argv) != 2:
         argv_error()
         return 1
-    app.load_content(sys.argv[1])
+
+    app.set_content(sys.argv[1])
+
     log_command_info()
+
     process_input(app)
+
     return 0
 
 

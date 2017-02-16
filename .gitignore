@@ -8,3 +8,4 @@ NanoPlayer/NanoPlayer
 project.xcworkspace
 xcuserdata
 
+*.pyc

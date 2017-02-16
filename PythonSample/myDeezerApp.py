@@ -117,7 +117,7 @@ class MyDeezerApp(object):
         self.log("SHUFFLE mode => {}".format("ON" if self.context.is_shuffle_mode else "OFF"))
         self.player.enable_shuffle_mode(self.context.is_shuffle_mode)
 
-    def load_content(self, content):
+    def set_content(self, content):
         """Load the given dzmedia content.
         It will replace the current_content of the player class
         :param content: The content to load
@@ -125,7 +125,6 @@ class MyDeezerApp(object):
         """
         self.log("LOAD => {}".format(self.context.dz_content_url))
         self.context.dz_content_url = content
-        self.player.load(content)
 
     def shutdown(self):
         """Stop the connection and the player if they have been initialized"""
@@ -173,6 +172,12 @@ class MyDeezerApp(object):
             return 0
         app.log(u"==== PLAYER_EVENT ==== {0}".format(PlayerEvent.event_name(event_type)))
         if event_type == PlayerEvent.QUEUELIST_LOADED:
+            # Check the current track index in the track list
+            streaming_mode = c_uint()
+            idx = c_uint()
+            Player.get_queuelist_context(event,streaming_mode,idx)
+            app.log(u"index: {}".format(idx.value))
+            
             app.player.play()
         if event_type == PlayerEvent.QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS:
             app.player.play_audio_ads()
@@ -197,6 +202,7 @@ class MyDeezerApp(object):
         app.log(u"++++ CONNECT_EVENT ++++ {0}".format(ConnectionEvent.event_name(event_type)))
         # After User is authenticated we can start the player
         if event_type == ConnectionEvent.USER_LOGIN_OK:
+            app.log(u"----> LOAD {0}".format(app.context.dz_content_url))
             app.player.load(app.context.dz_content_url)
         if event_type == ConnectionEvent.USER_LOGIN_FAIL_USER_INFO:
             app.shutdown()
