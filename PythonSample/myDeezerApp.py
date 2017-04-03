@@ -44,7 +44,7 @@ class MyDeezerApp(object):
         if not self.debug_mode:
             self.connection.debug_log_disable()
         else:
-            print u"Device ID:", self.connection.get_device_id()
+            print (u"Device ID:", self.connection.get_device_id())
         self.player = Player(self, self.connection.handle)
         self.player.set_event_cb(self.player_cb)
         self.connection.cache_path_set(self.connection.user_profile_path, activity_operation_cb=self.cache_path_set_cb,
@@ -62,7 +62,7 @@ class MyDeezerApp(object):
         :param message: The message to display
         """
         if self.debug_mode:
-            print message
+            print (message)
 
     def process_command(self, command):
         """Dispatch commands to corresponding function

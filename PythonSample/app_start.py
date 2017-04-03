@@ -21,50 +21,51 @@ def process_input(app):
         if not input_queue.empty():
             command = input_queue.get()
             if len(command) != 2 or command[0] not in "PSQ+-?R":
-                print "INVALID COMMAND"
+                print ("INVALID COMMAND")
                 log_command_info()
             else:
                 app.process_command(command)
 
 
 def argv_error():
-    print "Please give the content as argument like:"
-    print """\t"dzmedia:///track/10287076"        (Single track example)"""
-    print """\t"dzmedia:///album/607845"          (Album example)"""
-    print """\t"dzmedia:///playlist/1363560485"   (Playlist example)"""
-    print """\t"dzradio:///radio-220"             (Radio example)"""  # TODO: check for radio
-    print """\t"dzradio:///user-743548285"        (User Mix example)"""  # TODO: check for user
+    print ("Please give the content as argument like:")
+    print ("""\t"dzmedia:///track/10287076"        (Single track example)""")
+    print ("""\t"dzmedia:///album/607845"          (Album example)""")
+    print ("""\t"dzmedia:///playlist/1363560485"   (Playlist example)""")
+    print ("""\t"dzradio:///radio-220"             (Radio example)""")  # TODO: check for radio
+    print ("""\t"dzradio:///user-743548285"        (User Mix example)""")  # TODO: check for user
 
 
 def log_connect_info(app):
     if app.debug_mode:
-        print "---- Deezer NativeSDK version: {}".format(Connection.get_build_id())
-        print "---- Application ID: {}".format(app.your_application_id)
-        print "---- Product ID: {}".format(app.your_application_name)
+        print ("---- Deezer NativeSDK version: {}".format(Connection.get_build_id()))
+        print ("---- Application ID: {}".format(app.your_application_id))
+        print ("---- Product ID: {}".format(app.your_application_name))
 
 
 def log_command_info():
-    print "######### MENU #########"
-    print "- Please enter keys for command -"
-    print "\tS : START/STOP"
-    print "\tP : PLAY/PAUSE"
-    print "\t+ : NEXT"
-    print "\t- : PREVIOUS"
-    print "\tR : NEXT REPEAT MODE"
-    print "\t? : TOGGLE SHUFFLE MODE"
-    print "\tQ : QUIT"
-    print "########################"
+    print ("######### MENU #########")
+    print ("- Please enter keys for command -")
+    print ("\tS : START/STOP")
+    print ("\tP : PLAY/PAUSE")
+    print ("\t+ : NEXT")
+    print ("\t- : PREVIOUS")
+    print ("\tR : NEXT REPEAT MODE")
+    print ("\t? : TOGGLE SHUFFLE MODE")
+    print ("\tQ : QUIT")
+    print ("########################")
 
 
 def main():
-    app = MyDeezerApp(True)
-
-    log_connect_info(app)
 
     if len(sys.argv) != 2:
         argv_error()
         return 1
+ 
+    app = MyDeezerApp(True)
 
+    log_connect_info(app)
+ 
     app.set_content(sys.argv[1])
 
     log_command_info()

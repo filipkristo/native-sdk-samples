@@ -163,10 +163,10 @@ class Connection:
         self.handle = 0
         self.active = False
         self.set_event_cb(dz_connect_on_event_cb)
-        config = DZConnectConfiguration(c_char_p(self.app_id),
-                                        c_char_p(self.product_id),
-                                        c_char_p(self.product_build_id),
-                                        c_char_p(self.user_profile_path),
+        config = DZConnectConfiguration(c_char_p(self.app_id.encode('utf-8')),
+                                        c_char_p(self.product_id.encode('utf-8')),
+                                        c_char_p(self.product_build_id.encode('utf-8')),
+                                        c_char_p(self.user_profile_path.encode('utf-8')),
                                         self.dz_connect_on_event_cb,
                                         c_void_p(self.anonymous_blob),
                                         self.dz_connect_crash_reporting_delegate)
@@ -230,7 +230,7 @@ class Connection:
         context = py_object(operation_userdata) if operation_userdata else c_void_p(0)
         cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
         if libdeezer.dz_connect_cache_path_set(self.handle, cb, context,
-                                               c_char_p(user_cache_path)):
+                                               c_char_p(user_cache_path.encode('utf-8'))):
             raise ConnectionRequestFailedError(
                 u'cache_path_set: Request failed. Check connection and/or path validity.')
 
@@ -251,7 +251,7 @@ class Connection:
         context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
         cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
         if libdeezer.dz_connect_set_access_token(self.handle, cb, context,
-                                                 c_char_p(user_access_token)):
+                                                 c_char_p(user_access_token.encode('utf-8'))):
             raise ConnectionRequestFailedError(u'set_access_token: Request failed. Check access token or update it.')
 
     def set_offline_mode(self, offline_mode_forced, activity_operation_cb=None, operation_user_data=None):

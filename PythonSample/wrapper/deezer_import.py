@@ -61,7 +61,7 @@ elif platform.system() == u'Windows':
     lib_name = u'libdeezer.'
     lib_name += u'x64.dll' if sys.maxsize > 2**32 else u'x86.dll'
     lib_path = os.path.join(lib_path, lib_name)
-    print lib_path
+    print (lib_path)
     libdeezer = cdll.LoadLibrary(lib_path)
 else:
     lib_name = u'libdeezer.so'

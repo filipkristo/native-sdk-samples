@@ -228,7 +228,7 @@ class Player:
             self.current_content = content
         context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
         cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
-        if libdeezer.dz_player_load(self.handle, cb, context, self.current_content):
+        if libdeezer.dz_player_load(self.handle, cb, context, c_char_p(self.current_content.encode('utf-8'))):
             raise PlayerRequestFailedError(u"load: Unable to load selected track. Check connection and tracklist data.")
 
     def play(self, activity_operation_cb=None, operation_user_data=None, command=PlayerCommand.START_TRACKLIST,
@@ -301,7 +301,7 @@ class Player:
         """
         context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
         cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
-        print type(shuffle_mode)
+        print (type(shuffle_mode))
         if libdeezer.dz_player_enable_shuffle_mode(self.handle, cb, context, shuffle_mode):
             raise PlayerRequestFailedError(u"play: Unable to set repeat mode. Check player commands and info.")
 
