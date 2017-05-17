@@ -58,10 +58,10 @@ class PlayerIndex:
     def __init__(self):
         pass
 
-    INVALID = sys.maxsize
-    PREVIOUS = sys.maxsize - 1
-    CURRENT = sys.maxsize - 2
-    NEXT = sys.maxsize - 3
+    INVALID  = -1
+    PREVIOUS = -2
+    CURRENT  = -3
+    NEXT     = -4
 
 
 class PlayerEvent:
