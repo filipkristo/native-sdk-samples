@@ -3,6 +3,7 @@
 
 import Queue
 import threading
+import time
 from myDeezerApp import *
 
 
@@ -18,6 +19,7 @@ def process_input(app):
     input_thread.daemon = True
     input_thread.start()
     while app.connection.active or app.player.active:
+        time.sleep(0.1)
         if not input_queue.empty():
             command = input_queue.get()
             if len(command) != 2 or command[0] not in "PSQ+-?R":
