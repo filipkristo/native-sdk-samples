@@ -20,6 +20,8 @@ class MyDeezerApp(object):
             self.dz_content_url = ""
             self.repeat_mode = 0
             self.is_shuffle_mode = False
+            self.is_mute = False
+            self.volume = 100
             self.connect_handle = 0
             self.player_handle = 0
 
@@ -44,11 +46,12 @@ class MyDeezerApp(object):
         if not self.debug_mode:
             self.connection.debug_log_disable()
         else:
-            print (u"Device ID:", self.connection.get_device_id())
+            self.log("---- Device ID: {}".format(self.connection.get_device_id()))
         self.player = Player(self, self.connection.handle)
         self.player.set_event_cb(self.player_cb)
         self.connection.cache_path_set(self.connection.user_profile_path, activity_operation_cb=self.cache_path_set_cb,
                                        operation_userdata=self)
+        self.connection.set_cache_max_size(100*1024) # Set to 100MB
         self.connection.set_access_token(self.user_access_token)
         self.connection.set_offline_mode(False)
         self.context.player_handle = self.player.handle
@@ -77,6 +80,9 @@ class MyDeezerApp(object):
             '-': self.playback_previous,
             'R': self.playback_toggle_repeat,
             '?': self.playback_toggle_random,
+            'M': self.playback_toggle_mute,
+            'V': self.playback_volume_up,
+            'v': self.playback_volume_down,
             'Q': self.shutdown
         }
         call.get(c)()
@@ -104,6 +110,23 @@ class MyDeezerApp(object):
     def playback_previous(self):
         self.log("PREVIOUS => {}".format(self.context.dz_content_url))
         self.player.play(command=PlayerCommand.START_TRACKLIST, index=PlayerIndex.PREVIOUS)
+
+    def playback_toggle_mute(self):
+        self.context.is_mute = not self.context.is_mute
+        self.log("MUTE => {}".format("ON" if self.context.is_mute else "OFF"))
+        self.player.set_output_mute(self.context.is_mute)
+
+    def playback_volume_up(self):
+        if self.context.volume <= 80:
+            self.context.volume += 20
+        self.log("VOLUME UP => {}".format(self.context.volume))
+        self.player.set_output_volume(self.context.volume)
+
+    def playback_volume_down(self):
+        if self.context.volume >= 20:
+            self.context.volume -= 20
+        self.log("VOLUME DOWN => {}".format(self.context.volume))
+        self.player.set_output_volume(self.context.volume)
 
     def playback_toggle_repeat(self):
         self.context.repeat_mode += 1

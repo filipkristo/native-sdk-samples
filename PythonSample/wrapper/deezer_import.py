@@ -92,25 +92,36 @@ libdeezer.dz_connect_set_access_token.argtypes = [p_type, c_void_p, py_object, c
 libdeezer.dz_connect_offline_mode.argtypes = [p_type, c_void_p, py_object, c_bool]
 libdeezer.dz_connect_deactivate.argtypes = [p_type, c_void_p, py_object]
 
+libdeezer.dz_connect_smartcache_quota_set.argtypes = [p_type, c_void_p, py_object, c_int]
+
 # Player functions
 libdeezer.dz_player_new.argtypes = [p_type]
-libdeezer.dz_player_new.restype = p_type
-libdeezer.dz_player_activate.argtypes = [p_type, py_object]
+libdeezer.dz_player_new.restype  = p_type
+
+libdeezer.dz_player_activate.argtypes     = [p_type, py_object]
 libdeezer.dz_player_set_event_cb.argtypes = [p_type, dz_on_event_cb_func]
-libdeezer.dz_player_load.argtypes = [p_type, c_void_p, py_object, c_char_p]
-libdeezer.dz_player_play.argtypes = [p_type, c_void_p, py_object, c_int, c_int]
-libdeezer.dz_player_deactivate.argtypes = [p_type, c_void_p, py_object]
+libdeezer.dz_player_deactivate.argtypes   = [p_type, c_void_p, py_object]
+
 libdeezer.dz_player_event_get_type.argtypes = [c_void_p]
-libdeezer.dz_player_event_get_type.restype = c_int
+libdeezer.dz_player_event_get_type.restype  = c_int
+
 libdeezer.dz_player_event_track_selected_dzapiinfo.argtypes = [c_void_p]
-libdeezer.dz_player_event_track_selected_dzapiinfo.restype = c_char_p
+libdeezer.dz_player_event_track_selected_dzapiinfo.restype  = c_char_p
+
 libdeezer.dz_player_event_track_selected_next_track_dzapiinfo.argtypes = [c_void_p]
-libdeezer.dz_player_event_track_selected_next_track_dzapiinfo.restype = c_char_p
-libdeezer.dz_player_stop.argtypes = [p_type, c_void_p, py_object]
-libdeezer.dz_player_pause.argtypes = [p_type, c_void_p, py_object]
+libdeezer.dz_player_event_track_selected_next_track_dzapiinfo.restype  = c_char_p
+
+libdeezer.dz_player_load.argtypes   = [p_type, c_void_p, py_object, c_char_p]
+libdeezer.dz_player_play.argtypes   = [p_type, c_void_p, py_object, c_int, c_int]
+libdeezer.dz_player_stop.argtypes   = [p_type, c_void_p, py_object]
+libdeezer.dz_player_pause.argtypes  = [p_type, c_void_p, py_object]
 libdeezer.dz_player_resume.argtypes = [p_type, c_void_p, py_object]
+
 libdeezer.dz_player_event_get_queuelist_context.argtypes = [c_void_p, c_void_p, c_void_p]
-libdeezer.dz_player_set_repeat_mode.argtypes = [p_type, c_void_p, py_object]
-libdeezer.dz_player_enable_shuffle_mode.argtypes = [p_type, c_void_p, py_object, p_type]
-libdeezer.dz_player_play_audioads.argtypes = [p_type, c_void_p, py_object]
+libdeezer.dz_player_set_repeat_mode.argtypes     = [p_type, c_void_p, py_object]
+libdeezer.dz_player_enable_shuffle_mode.argtypes = [p_type, c_void_p, py_object, c_bool]
+libdeezer.dz_player_play_audioads.argtypes       = [p_type, c_void_p, py_object]
+
+libdeezer.dz_player_set_output_volume.argtypes = [p_type, c_void_p, py_object, c_int]
+libdeezer.dz_player_set_output_mute.argtypes   = [p_type, c_void_p, py_object, c_bool]
 

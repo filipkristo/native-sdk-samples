@@ -274,6 +274,23 @@ class Connection:
             raise ConnectionRequestFailedError(
                 u'connect_offline_mode: Request failed. Check connection and callbacks if used.')
 
+    def set_cache_max_size(self, cache_max_size, activity_operation_cb=None, operation_user_data=None):
+        """Set cache size limitation.
+
+        :param activity_operation_cb: The callback of the operation.
+        :param operation_user_data: An object you want to pass to
+            activity_operation_cb.
+        :param cache_max_size: The maixum size of the cache in kilobyte
+        :type activity_operation_cb: dz_activity_operation_cb_func
+        :type operation_user_data: The type of the object you want to manipulate
+        :type cache_max_size: int
+        """
+        context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_connect_smartcache_quota_set(self.handle, cb, context, c_int(cache_max_size)):
+            raise ConnectionRequestFailedError(
+                u'connect_cache_max_size: Request failed. Check connection and callbacks if used.')
+
     def shutdown(self, activity_operation_cb=None, operation_user_data=None):
         """Deactivate connection associated to the handle."""
         context = py_object(operation_user_data) if operation_user_data else c_void_p(0)

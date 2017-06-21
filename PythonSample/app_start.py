@@ -22,7 +22,7 @@ def process_input(app):
         time.sleep(0.1)
         if not input_queue.empty():
             command = input_queue.get()
-            if len(command) != 2 or command[0] not in "PSQ+-?R":
+            if len(command) != 2 or command[0] not in "SP+-R?MVvQ":
                 print ("INVALID COMMAND")
                 log_command_info()
             else:
@@ -54,6 +54,9 @@ def log_command_info():
     print ("\t- : PREVIOUS")
     print ("\tR : NEXT REPEAT MODE")
     print ("\t? : TOGGLE SHUFFLE MODE")
+    print ("\tM : TOGGLE MUTE")
+    print ("\tV : VOLUME UP")
+    print ("\tv : VOLUME DOWN")
     print ("\tQ : QUIT")
     print ("########################")
 

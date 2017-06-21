@@ -301,9 +301,28 @@ class Player:
         """
         context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
         cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
-        print (type(shuffle_mode))
         if libdeezer.dz_player_enable_shuffle_mode(self.handle, cb, context, shuffle_mode):
             raise PlayerRequestFailedError(u"play: Unable to set repeat mode. Check player commands and info.")
+
+    def set_output_volume(self, volume, activity_operation_cb=None, operation_user_data=None):
+        """Set the output volume of the player.
+            :param volume: Set to the percentage of the output volume
+            :type volume: int
+        """
+        context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_player_set_output_volume(self.handle, cb, context, volume):
+            raise PlayerRequestFailedError(u"play: Unable to set volume. Check player commands and info.")
+
+    def set_output_mute(self, is_mute, activity_operation_cb=None, operation_user_data=None):
+        """Set the mute mode of the player
+            :param is_mute: Set to true to mute the output volume
+            :type is_mute: bool
+        """
+        context = py_object(operation_user_data) if operation_user_data else c_void_p(0)
+        cb = activity_operation_cb if activity_operation_cb else c_void_p(0)
+        if libdeezer.dz_player_set_output_mute(self.handle, cb, context, is_mute):
+            raise PlayerRequestFailedError(u"play: Unable to (un)mute the output. Check player commands and info.")
 
     def play_audio_ads(self, activity_operation_cb=None, operation_user_data=None):
         """Load and play an audio ad when required"""
