@@ -189,9 +189,9 @@ class MyDeezerApp(object):
             app.log(u"\tcan_pause_unpause: {0} - can_seek: {1}"
                     .format(can_pause_unpause.value, can_seek.value))
             if selected_dz_api_info:
-                print "\tNOW:\t%s" % selected_dz_api_info
+                print ("\tNOW:\t%s" % selected_dz_api_info)
             if next_dz_api_info:
-                print "\tNEXT:\t%s" % next_dz_api_info
+                print ("\tNEXT:\t%s" % next_dz_api_info)
             return 0
         app.log(u"==== PLAYER_EVENT ==== {0}".format(PlayerEvent.event_name(event_type)))
         if event_type == PlayerEvent.QUEUELIST_LOADED:
