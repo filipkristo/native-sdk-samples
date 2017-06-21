@@ -189,9 +189,9 @@ class MyDeezerApp(object):
             app.log(u"\tcan_pause_unpause: {0} - can_seek: {1}"
                     .format(can_pause_unpause.value, can_seek.value))
             if selected_dz_api_info:
-                app.log(u"\tnow:{0}".format(selected_dz_api_info))
+                print "\tNOW:\t%s" % selected_dz_api_info
             if next_dz_api_info:
-                app.log(u"\tnext:{0}".format(next_dz_api_info))
+                print "\tNEXT:\t%s" % next_dz_api_info
             return 0
         app.log(u"==== PLAYER_EVENT ==== {0}".format(PlayerEvent.event_name(event_type)))
         if event_type == PlayerEvent.QUEUELIST_LOADED:
@@ -203,6 +203,9 @@ class MyDeezerApp(object):
             
             app.player.play()
         if event_type == PlayerEvent.QUEUELIST_TRACK_RIGHTS_AFTER_AUDIOADS:
+            # Current tacklist playback is stopped in order to play audioads,
+            # it should be resumed "manually" after the RENDER_TRACK_END (of the audio ad) event.
+            app.player.is_playing = False
             app.player.play_audio_ads()
         return 0
 
