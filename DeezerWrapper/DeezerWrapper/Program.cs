@@ -82,16 +82,6 @@ namespace DeezerWrapper
         {
             Console.WriteLine($"{DateTime.Now} - {playerEvent.eventType}");
 
-            //if (playerEvent.eventType == PLAYER_EVENT_TYPE.DZ_PLAYER_EVENT_RENDER_TRACK_UNDERFLOW && !next)
-            //{
-            //    next = true;
-            //    player.Next();
-            //}
-            //else
-            //{
-            //    next = false;
-            //}
-
             if (playerEvent.eventType == PLAYER_EVENT_TYPE.DZ_PLAYER_EVENT_RENDER_TRACK_UNDERFLOW)
                 player.Next();
         }
