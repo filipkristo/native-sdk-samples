@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{408C40AE-6437-4931-A23A-0A2D851E8A37}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>DeezerWrapper</RootNamespace>
-    <AssemblyName>DeezerWrapper</AssemblyName>
+    <ProjectGuid>{C67CB8BA-74BF-4CE5-9B71-1F8885FEA10F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DeezerPlayerLib</RootNamespace>
+    <AssemblyName>DeezerPlayerLib</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,10 +21,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>true</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -47,27 +45,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Engine\Connect.cs" />
+    <Compile Include="Engine\ConnectConfig.cs" />
+    <Compile Include="Engine\ConnectEvent.cs" />
+    <Compile Include="Engine\CONNECT_CONFIG.cs" />
+    <Compile Include="Enum\CONNECT_EVENT_TYPE.cs" />
+    <Compile Include="Enum\ERRORS.cs" />
+    <Compile Include="Engine\NativeMethods.cs" />
+    <Compile Include="Engine\NewAccessTokenConnectEvent.cs" />
+    <Compile Include="Engine\Player.cs" />
+    <Compile Include="Engine\PlayerEvent.cs" />
+    <Compile Include="Enum\PLAYER_COMMANDS.cs" />
+    <Compile Include="Enum\PLAYER_EVENT_TYPE.cs" />
+    <Compile Include="Enum\QUEUELIST_REPEAT_MODE.cs" />
+    <Compile Include="Enum\STREAMING_MODE.cs" />
+    <Compile Include="Enum\TRACKLIST_AUTOPLAY_MODE.cs" />
+    <Compile Include="Engine\UTF8Marshaler.cs" />
+    <Compile Include="Engine\Wrapper.cs" />
+    <Compile Include="Model\Album.cs" />
+    <Compile Include="Model\Artist.cs" />
+    <Compile Include="Model\Song.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DeezerPlayerLib\DeezerPlayerLib.csproj">
-      <Project>{c67cb8ba-74bf-4ce5-9b71-1f8885fea10f}</Project>
-      <Name>DeezerPlayerLib</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

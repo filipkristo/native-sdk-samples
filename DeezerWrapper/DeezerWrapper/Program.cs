@@ -73,12 +73,12 @@ namespace DeezerWrapper
             connect.Dispose();
         }
 
-        private static void OnConnect(Connect connect, ConnectEvent connectEvent, DispatcherObject userData)
-        {            
-            Debug.WriteLine(connectEvent.eventType);            
+        private static void OnConnect(Connect connect, ConnectEvent connectEvent)
+        {
+            Console.WriteLine(connectEvent.eventType);            
         }
 
-        private static void OnPlayerEvent(Player player, PlayerEvent playerEvent, DispatcherObject dispatcherObject)
+        private static void OnPlayerEvent(Player player, PlayerEvent playerEvent)
         {
             Console.WriteLine($"{DateTime.Now} - {playerEvent.eventType}");
 
