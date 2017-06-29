@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Deezer;
-using System.Windows.Threading;
 using System.Diagnostics;
 using System.Threading;
+using DeezerPlayerLib.Engine;
+using DeezerPlayerLib.Enum;
 
 namespace DeezerWrapper
 {
     class Program
-    {
-        private static bool next;        
-
+    {             
         static void Main(string[] args)
         {
             var stream = args.Length > 0 ? args.First() : "dzradio:///radio-30781";
