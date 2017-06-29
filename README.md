@@ -48,9 +48,19 @@ A small app using Unity engine and a C# wrapper. Can be used as a base for a Uni
  - Playing a Deezer content (track, album or playlist)
  - Nice UI using Unity engine.
 
+## [DeezerWrapper][7]
+
+DeezerWrapper is C# console application which uses Deezer's Native SDK to play a song once a user was authenticated.
+
+### Features
+
+ - C# Wrapper to create own app using Native SDK
+ - Playing a Deezer content (track, album or paylist)
+
  [1]: http://developers.deezer.com/sdk/native
  [2]: https://github.com/deezer/native-sdk-samples/tree/master/NanoPlayer
  [3]: https://github.com/deezer/native-sdk-samples/tree/master/OfflineModePlayer
  [4]: http://developers.deezer.com/sdk/native/releasenotes/rss
  [5]: https://github.com/deezer/native-sdk-samples/tree/master/PythonSample
  [6]: https://github.com/deezer/native-sdk-samples/tree/master/UnityPlayer
+ [7]: https://github.com/deezer/native-sdk-samples/tree/master/DeezerWrapper
